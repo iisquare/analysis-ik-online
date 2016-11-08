@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">  
+<properties>  
+	<comment>IK Analyzer 扩展配置</comment>
+	<entry key="host">Mongo主机名称</entry> 
+	<entry key="port">Mongo域名</entry> 
+	<entry key="database">admin</entry> 
+	<entry key="userName">Mongo账号</entry> 
+	<entry key="password">Mongo密码</entry> 
+	<entry key="initDictSerials">suggest</entry>
+</properties>

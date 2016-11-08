@@ -1,0 +1,42 @@
+// 插件
+apply plugin: 'java' 
+apply plugin: 'maven'  
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+// 项目配置
+version='0.1'
+archivesBaseName="ik-elasticsearch5.x"
+
+// 仓库
+repositories {
+    mavenCentral()
+}
+
+// 依赖
+def elasticsearchVersion = '5.0.0'
+dependencies {
+    compile (
+        // elasticsearch
+	[group: 'org.elasticsearch', name: 'elasticsearch', version: elasticsearchVersion]
+    )
+}
+
+// 依赖编译，然后打包JAR
+task taskJar(type:Jar, dependsOn: compileJava) {
+    from 'build/classes'
+    destinationDir = file('build/libs')
+}
+
+// 清除上次的编译过的文件
+task clearProject(type:Delete){
+   delete 'build', 'target'
+}
+
+// 把JAR复制到目标目录
+task release(type: Copy,dependsOn: [clearProject, taskJar]) {
+    from('build/libs') {
+        include '*.jar'
+    }
+    into ('target')
+}
