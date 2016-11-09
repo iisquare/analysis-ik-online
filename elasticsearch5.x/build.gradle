@@ -5,38 +5,50 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 
 // 项目配置
-version='0.1'
-archivesBaseName="ik-elasticsearch5.x"
+sourceCompatibility = 1.8
+version = '0.1'
+archivesBaseName = 'ik-elasticsearch5.x'
 
 // 仓库
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 // 依赖
 def elasticsearchVersion = '5.0.0'
 dependencies {
-    compile (
-        // elasticsearch
-	[group: 'org.elasticsearch', name: 'elasticsearch', version: elasticsearchVersion]
+	testCompile (
+		// hamcrest
+		[group: 'org.hamcrest', name: 'hamcrest-core', version: '1.3'],
+		[group: 'org.hamcrest', name: 'hamcrest-library', version: '1.3'],
+		// junit
+        [group: 'junit', name: 'junit', version: '4.12'],
     )
+	compile (
+		// elasticsearch
+		[group: 'org.elasticsearch', name: 'elasticsearch', version: elasticsearchVersion],
+		// httpclient
+		[group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'],
+		// log4j
+		[group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.3'],
+	)
 }
 
 // 依赖编译，然后打包JAR
 task taskJar(type:Jar, dependsOn: compileJava) {
-    from 'build/classes'
-    destinationDir = file('build/libs')
+	from 'build/classes'
+	destinationDir = file('build/libs')
 }
 
 // 清除上次的编译过的文件
 task clearProject(type:Delete){
-   delete 'build', 'target'
+	delete 'build', 'target'
 }
 
 // 把JAR复制到目标目录
 task release(type: Copy,dependsOn: [clearProject, taskJar]) {
-    from('build/libs') {
-        include '*.jar'
-    }
-    into ('target')
+	from('build/libs') {
+		include '*.jar'
+	}
+	into ('target')
 }
