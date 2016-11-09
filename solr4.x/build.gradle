@@ -5,9 +5,9 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 
 // 项目配置
-sourceCompatibility = 1.7
 version = '0.1'
 archivesBaseName = 'ik-solr4.x'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 // 仓库
 repositories {

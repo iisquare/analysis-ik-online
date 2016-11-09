@@ -92,8 +92,7 @@ public class FrameServlet extends HttpServlet {
 		instance.actionName = actionName;
 		instance.request = request;
 		instance.response = response;
-		instance.params = ServletUtil.parseParameterMap(request
-				.getParameterMap());
+		instance.params = ServletUtil.parseParameterMap(request.getParameterMap());
 		instance.assign = new LinkedHashMap<>();
 		Object initVal = instance.init();
 		if (null != initVal) {
