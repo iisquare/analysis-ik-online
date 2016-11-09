@@ -2,3 +2,7 @@
 /elasticsearch5.x/.settings
 /elasticsearch5.x/.classpath
 /elasticsearch5.x/.project
+/solr4.x/.classpath
+/solr4.x/.gradle
+/solr4.x/.settings
+/solr4.x/.project
