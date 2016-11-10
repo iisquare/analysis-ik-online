@@ -5,9 +5,9 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 
 // 项目配置
-sourceCompatibility = 1.8
 version = '0.1'
 archivesBaseName = 'ik-solr6.x'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 // 仓库
 repositories {
@@ -19,21 +19,20 @@ repositories {
 def solrVersion = '6.2.1'
 dependencies {
 	testCompile (
-		// hamcrest
-		[group: 'org.hamcrest', name: 'hamcrest-core', version: '1.3'],
-		[group: 'org.hamcrest', name: 'hamcrest-library', version: '1.3'],
-		// junit
-        [group: 'junit', name: 'junit', version: '4.12'],
     )
 	compile (
 		// solr
 		[group: 'org.apache.solr', name: 'solr-core', version: solrVersion],
+		// JSON
+        [group: 'net.sf.json-lib', name: 'json-lib-ext-spring', version: '1.0.2'],
+		// mongo
+		[group: 'org.mongodb', name: 'mongo-java-driver', version: '2.13.2'],
 	)
 }
 
 // 依赖编译，然后打包JAR
 task taskJar(type:Jar, dependsOn: compileJava) {
-	from 'build/classes'
+	from 'build/classes/main'
 	destinationDir = file('build/libs')
 }
 

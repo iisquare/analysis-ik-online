@@ -7,3 +7,9 @@
 /solr4.x/.settings
 /solr4.x/.project
 /solr4.x/target
+/solr6.x/.project
+/solr6.x/.gradle
+/solr6.x/.settings
+/solr6.x/bin
+/solr6.x/build
+/solr6.x/.classpath
