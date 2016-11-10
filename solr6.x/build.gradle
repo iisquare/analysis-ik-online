@@ -24,7 +24,7 @@ dependencies {
 		// solr
 		[group: 'org.apache.solr', name: 'solr-core', version: solrVersion],
 		// JSON
-        [group: 'net.sf.json-lib', name: 'json-lib-ext-spring', version: '1.0.2'],
+		[group: 'net.sf.json-lib', name: 'json-lib', version: '2.2.2', classifier: 'jdk15'],
 		// mongo
 		[group: 'org.mongodb', name: 'mongo-java-driver', version: '2.13.2'],
 	)
