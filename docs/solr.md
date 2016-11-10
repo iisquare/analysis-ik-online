@@ -34,12 +34,12 @@
 
 2. 集合字段说明：
 
-| 名称 | 类型 | 默认 | 说明 |
-| :----- | :----- | :----- | :----- |
-| text | String | 无 | 字典内容 |
-| identity | String | 无 | 分类标识，只为方便管理 |
-| time_create | Integer | 无 | 创建时间 |
-| time_update | Integer| 无 | 修改时间 |
+	| 名称 | 类型 | 默认 | 说明 |
+	| :----- | :----- | :----- | :----- |
+	| text | String | 无 | 字典内容 |
+	| identity | String | 无 | 分类标识，只为方便管理 |
+	| time_create | Integer | 无 | 创建时间 |
+	| time_update | Integer| 无 | 修改时间 |
 
 3. 字典格式说明：
 	- 基础词条为单个字或连续的词，单个字主要用于细粒度分词
