@@ -24,9 +24,11 @@ public class IKSynonymParser extends SynonymMap.Parser {
 	}
 
 	/**
-	 * "aaa => a11", // 将aaa替换为111 "bbb => b11 b22", //
-	 * 将bbb替换为b11，将bbb之后的位置替换为b22，依次顺延 "ccc => c11,c22", // 将ccc替换为c11和c22
-	 * "ddd,d11,d22", // 将d11或d22替换为ddd "e11,e22 => eee", // 将e11或e22替换为eee
+	 * "aaa => a11", // 将aaa替换为111
+	 * "bbb => b11 b22", // 将bbb替换为b11，将bbb之后的位置替换为b22，依次顺延
+	 * "ccc => c11,c22", // 将ccc替换为c11和c22
+	 * "ddd,d11,d22", // 将d11或d22替换为ddd
+	 * "e11,e22 => eee", // 将e11或e22替换为eee
 	 */
 	public void addInternal(String line) throws IOException {
 		if (line.length() == 0 || line.charAt(0) == '#') {

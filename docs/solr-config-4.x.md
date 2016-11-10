@@ -52,27 +52,4 @@
 9. 拷贝solr-4.10.4/example/solr/collection1目录到/data/solr家目录，参照analysis-ik-online/solr4.xconfig/schema.xml修改文档模板。
 10. 拷贝solr-4.10.4/resources/log4j.properties至tomcat/webapps/solr/WEB-INF/classes/目录，自定义输出日志。
 
-> **Schema示例**
-
-```
-<fieldType name="text_ik" class="solr.TextField">
-    <analyzer type="index">
-        <tokenizer class="com.iisquare.solr.wltea.lucene.IKTokenizerFactory" dictSerial="suggest" useSmart="true" useArabic="false" useEnglish="false" />
-        <filter class="com.iisquare.solr.wltea.lucene.IKSynonymFilterFactory" dictSerial="suggest" />
-    </analyzer>
-    <analyzer type="query">
-        <tokenizer class="com.iisquare.solr.wltea.lucene.IKTokenizerFactory" dictSerial="suggest" useSmart="true" useArabic="false" useEnglish="false" />
-    </analyzer>
-</fieldType>
-```
-
-> **Schema参数**
-
-1. IKTokenizerFactory
-	- dictSerial	：词典编码，用于区分不同词典
-	- useSmart：是否采用细粒度分词
-	- useArabic：是否拆分数值
-	- useEnglish	：是否拆分字母
-2. IKSynonymFilterFactory
-	- dictSerial：词典编码，用于区分不同词典
 
