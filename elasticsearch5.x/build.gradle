@@ -32,6 +32,10 @@ dependencies {
 		[group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'],
 		// log4j
 		[group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.3'],
+		// JSON
+		[group: 'net.sf.json-lib', name: 'json-lib', version: '2.2.2', classifier: 'jdk15'],
+		// mongo
+		[group: 'org.mongodb', name: 'mongo-java-driver', version: '2.13.2'],
 	)
 }
 
