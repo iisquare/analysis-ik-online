@@ -5,13 +5,14 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 
 // 项目配置
-sourceCompatibility = 1.8
 version = '0.1'
 archivesBaseName = 'ik-elasticsearch5.x'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 // 仓库
 repositories {
-	mavenCentral()
+	//mavenCentral()
+	maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
 }
 
 // 依赖
