@@ -1,6 +1,6 @@
 # analysis-ik-online for solr4.x
 
->  **通用接口**
+> **通用接口**
 
 1. 在线调试开关
 	- 接口地址：/solr/ik/dict/debug/

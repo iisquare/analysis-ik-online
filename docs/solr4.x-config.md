@@ -15,10 +15,13 @@
 	- json-lib-2.4-jdk15.jar
 	- mongo-java-driver-2.13.2.jar
 5. 创建/data/solr家目录，拷贝solr.xml到家目录并完善以下配置：
+
 	```
 	33     <int name="hostPort">${jetty.port:8080}</int>
 	```
+
 6. 修改tomcat/webapps/solr/WEB-INF/web.xml文件，完善以下配置：
+
 	```
 	40   <env-entry>
 	41       <env-entry-name>solr/home</env-entry-name>
@@ -26,8 +29,10 @@
 	43       <env-entry-type>java.lang.String</env-entry-type>
 	44   </env-entry>
 	```
+
 7. 拷贝analysis-ik-online/solr4.xconfig/IKAnalyzer.cfg.xml至tomcat/webapps/solr/WEB-INF/classes/目录下，修改对应MongoDB配置。
 8. 修改tomcat/webapps/solr/WEB-INF/web.xml文件，增加IKControllerServlet配置。
+
 	```
 	<servlet>
 		<servlet-name>IKControllerServlet</servlet-name>
@@ -43,6 +48,7 @@
 		<url-pattern>/ik/*</url-pattern>
 	</servlet-mapping>
 	```
+
 9. 拷贝solr-4.10.4/example/solr/collection1目录到/data/solr家目录，参照analysis-ik-online/solr4.xconfig/schema.xml修改文档模板。
 10. 拷贝solr-4.10.4/resources/log4j.properties至tomcat/webapps/solr/WEB-INF/classes/目录，自定义输出日志。
 
