@@ -16,10 +16,12 @@ repositories {
 }
 
 // 依赖
-def solrVersion = '6.2.1'
+def solrVersion = '6.3.0'
 dependencies {
 	testCompile (
-    )
+		// slf4j
+		[group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.7']
+	)
 	compile (
 		// solr
 		[group: 'org.apache.solr', name: 'solr-core', version: solrVersion],
