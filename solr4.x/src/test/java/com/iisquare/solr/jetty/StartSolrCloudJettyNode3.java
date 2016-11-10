@@ -33,7 +33,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class StartSolrCloudJettyNode3 {
 	public static void main(String[] args) {
 		System.setProperty("solr.solr.home", "server/example/node3");
-		System.setProperty("zkHost", "127.0.0.1:9983");
+		System.setProperty("zkHost", "127.0.0.1:9984"); // 端口号指定为Node1.zkRun的端口
 
 		Server server = new Server();
 		SocketConnector connector = new SocketConnector();

@@ -33,12 +33,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class StartSolrCloudJettyNode1 {
 	public static void main(String[] args) {
 		System.setProperty("solr.solr.home", "server/example/node1");
-		// java -Dbootstrap_confdir=./solr/conf
-		// -Dcollection.configName=default_config -DzkRun -jar start.jar
-		// System.setProperty("bootstrap_confdir",
-		// "solr/example/solr/collection1/conf");
-		// System.setProperty("collection.configName", "collection1");
-		System.setProperty("zkRun", "");
+		System.setProperty("zkRun", ""); // 端口号为connector.port + 1000
 
 		Server server = new Server();
 		SocketConnector connector = new SocketConnector();

@@ -33,7 +33,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class StartSolrCloudJettyNode2 {
 	public static void main(String[] args) {
 		System.setProperty("solr.solr.home", "server/example/node2");
-		System.setProperty("zkHost", "127.0.0.1:9983");
+		System.setProperty("zkHost", "127.0.0.1:9984"); // 端口号指定为Node1.zkRun的端口
 
 		Server server = new Server();
 		SocketConnector connector = new SocketConnector();
@@ -48,7 +48,7 @@ public class StartSolrCloudJettyNode2 {
 		bb.setContextPath("/solr");
 		bb.setWar("server/webapp");
 
-		//START JMX SERVER
+		// START JMX SERVER
 		if (true) {
 			MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 			MBeanContainer mBeanContainer = new MBeanContainer(mBeanServer);
