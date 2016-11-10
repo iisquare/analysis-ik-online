@@ -13,3 +13,4 @@
 /solr6.x/bin
 /solr6.x/build
 /solr6.x/.classpath
+/solr6.x/target

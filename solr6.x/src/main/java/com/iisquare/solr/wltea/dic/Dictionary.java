@@ -25,7 +25,6 @@
  */
 package com.iisquare.solr.wltea.dic;
 
-import java.io.Reader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -276,9 +275,8 @@ public class Dictionary {
 	private boolean loadSynonymDict(DB db) throws Exception {
 		Analyzer analyzer = new Analyzer() {
 			@Override
-			protected TokenStreamComponents createComponents(String fieldName,
-					Reader reader) {
-				Tokenizer tokenizer = new WhitespaceTokenizer(reader);
+			protected TokenStreamComponents createComponents(String fieldName) {
+				Tokenizer tokenizer = new WhitespaceTokenizer();
 				// TokenStream stream = ignoreCase ? new
 				// LowerCaseFilter(tokenizer) : tokenizer;
 				TokenStream stream = new LowerCaseFilter(tokenizer);

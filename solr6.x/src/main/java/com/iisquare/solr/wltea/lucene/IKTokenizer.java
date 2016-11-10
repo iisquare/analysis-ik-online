@@ -27,8 +27,6 @@
 package com.iisquare.solr.wltea.lucene;
 
 import java.io.IOException;
-import java.io.Reader;
-
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
@@ -62,14 +60,12 @@ public final class IKTokenizer extends Tokenizer {
 	 * @param useSmart
 	 *            none
 	 */
-	public IKTokenizer(Reader in, String dictSerial, boolean useSmart,
+	public IKTokenizer(String dictSerial, boolean useSmart,
 			boolean useArabic, boolean useEnglish) {
-		super(in);
 		offsetAtt = addAttribute(OffsetAttribute.class);
 		termAtt = addAttribute(CharTermAttribute.class);
 		typeAtt = addAttribute(TypeAttribute.class);
-		_IKImplement = new IKSegmenter(in, dictSerial, useSmart, useArabic,
-				useEnglish);
+		_IKImplement = new IKSegmenter(input, dictSerial, useSmart, useArabic, useEnglish);
 	}
 
 	/*

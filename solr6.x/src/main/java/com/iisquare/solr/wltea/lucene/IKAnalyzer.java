@@ -24,8 +24,6 @@
  */
 package com.iisquare.solr.wltea.lucene;
 
-import java.io.Reader;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -114,18 +112,15 @@ public final class IKAnalyzer extends Analyzer {
 	 * 重载Analyzer接口，构造分词组件
 	 */
 	@Override
-	protected TokenStreamComponents createComponents(String fieldName,
-			final Reader in) {
-		Tokenizer _IKTokenizer = new IKTokenizer(in, dictSerial, useSmart,
-				useArabic, useEnglish);
+	protected TokenStreamComponents createComponents(String fieldName) {
+		Tokenizer _IKTokenizer = new IKTokenizer(dictSerial, useSmart, useArabic, useEnglish);
 		return new TokenStreamComponents(_IKTokenizer) {
-
 			@Override
 			public TokenStream getTokenStream() {
 				TokenStream tokenStream = super.getTokenStream();
 				if (useSynonym) { // 拓展同义词词典
-					tokenStream = new SynonymFilter(tokenStream, Dictionary
-							.getSingleton(dictSerial).getSynonymDict(), true);
+					tokenStream = new SynonymFilter(tokenStream,
+							Dictionary.getSingleton(dictSerial).getSynonymDict(), true);
 				}
 				return tokenStream;
 			}

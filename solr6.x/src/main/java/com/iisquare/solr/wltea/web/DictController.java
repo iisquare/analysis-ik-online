@@ -28,7 +28,6 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.util.Version;
 import org.apache.solr.cloud.ZkController;
 import org.apache.solr.common.cloud.SolrZkClient;
 import org.apache.solr.core.CoreContainer;
@@ -97,8 +96,7 @@ public class DictController extends ControllerBase {
 			// 建立内存索引对象
 			directory = new RAMDirectory();
 			// 配置IndexWriterConfig
-			IndexWriterConfig iwConfig = new IndexWriterConfig(Version.LATEST,
-					indexAnalyzer);
+			IndexWriterConfig iwConfig = new IndexWriterConfig(indexAnalyzer);
 			iwConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
 			iwriter = new IndexWriter(directory, iwConfig);
 			String[] contents = content.split("\n");

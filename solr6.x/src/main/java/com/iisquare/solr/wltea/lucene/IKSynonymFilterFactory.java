@@ -22,7 +22,6 @@ public class IKSynonymFilterFactory extends TokenFilterFactory {
 
 	public IKSynonymFilterFactory(Map<String, String> args) {
 		super(args);
-		assureMatchVersion();
 		if (args.containsKey("dictSerial")) {
 			this.setDictSerial(args.get("dictSerial").toString().trim());
 		}
@@ -30,8 +29,7 @@ public class IKSynonymFilterFactory extends TokenFilterFactory {
 
 	@Override
 	public TokenStream create(TokenStream input) {
-		return new SynonymFilter(input, Dictionary.getSingleton(dictSerial)
-				.getSynonymDict(), true);
+		return new SynonymFilter(input, Dictionary.getSingleton(dictSerial).getSynonymDict(), true);
 	}
 
 }

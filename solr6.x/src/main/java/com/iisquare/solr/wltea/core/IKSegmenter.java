@@ -58,8 +58,8 @@ public final class IKSegmenter {
 	 * 
 	 *            非智能分词：细粒度输出所有可能的切分结果 智能分词： 合并数词和量词，对分词结果进行歧义判断
 	 */
-	public IKSegmenter(Reader input, String dictSerial, boolean useSmart,
-			boolean useArabic, boolean useEnglish) {
+	public IKSegmenter(Reader input, String dictSerial,
+			boolean useSmart, boolean useArabic, boolean useEnglish) {
 		this.dictSerial = dictSerial;
 		this.input = input;
 		this.useSmart = useSmart;

@@ -1,6 +1,5 @@
 package com.iisquare.solr.wltea.lucene;
 
-import java.io.Reader;
 import java.util.Map;
 
 import org.apache.lucene.analysis.Tokenizer;
@@ -57,7 +56,6 @@ public class IKTokenizerFactory extends TokenizerFactory {
 
 	public IKTokenizerFactory(Map<String, String> args) {
 		super(args);
-		assureMatchVersion();
 		if (args.containsKey("dictSerial")) {
 			this.setDictSerial(args.get("dictSerial").toString().trim());
 		}
@@ -76,9 +74,8 @@ public class IKTokenizerFactory extends TokenizerFactory {
 	}
 
 	@Override
-	public Tokenizer create(AttributeFactory factory, Reader input) {
-		Tokenizer _IKTokenizer = new IKTokenizer(input, dictSerial, useSmart,
-				useArabic, useEnglish);
+	public Tokenizer create(AttributeFactory factory) {
+		Tokenizer _IKTokenizer = new IKTokenizer(dictSerial, useSmart, useArabic, useEnglish);
 		return _IKTokenizer;
 	}
 }
