@@ -14,10 +14,10 @@
 /solr6.x/build
 /solr6.x/.classpath
 /solr6.x/target
-/elasticsearch5.x/server/example/single/plugins
-/elasticsearch5.x/server/example/single/bin
-/elasticsearch5.x/server/example/single/data
-/elasticsearch5.x/server/example/single/lib
-/elasticsearch5.x/server/example/single/logs
-/elasticsearch5.x/server/example/single/config/scripts
+/elasticsearch5.x/server/example/*/plugins
+/elasticsearch5.x/server/example/*/bin
+/elasticsearch5.x/server/example/*/data
+/elasticsearch5.x/server/example/*/lib
+/elasticsearch5.x/server/example/*/logs
+/elasticsearch5.x/server/example/*/config/scripts
 /elasticsearch5.x/target
