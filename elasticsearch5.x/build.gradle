@@ -21,8 +21,6 @@ repositories {
 def elasticsearchVersion = '5.0.0'
 dependencies {
 	testCompile (
-    )
-	compile (
 		// elasticsearch
 		[group: 'org.elasticsearch.client', name: 'transport', version: elasticsearchVersion],
 		// elasticsearch plugin
@@ -40,6 +38,8 @@ dependencies {
 		[group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'],
 		// log4j
 		[group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'],
+    )
+	compile (
 		// mongo
 		[group: 'org.mongodb', name: 'mongo-java-driver', version: '2.13.2'],
 	)
@@ -50,21 +50,3 @@ dependencies {
 	compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.2'
 }
 
-// 依赖编译，然后打包JAR
-task taskJar(type:Jar, dependsOn: compileJava) {
-	from 'build/classes'
-	destinationDir = file('build/libs')
-}
-
-// 清除上次的编译过的文件
-task clearProject(type:Delete){
-	delete 'build', 'target'
-}
-
-// 把JAR复制到目标目录
-task release(type: Copy,dependsOn: [clearProject, taskJar]) {
-	from('build/libs') {
-		include '*.jar'
-	}
-	into ('target')
-}
