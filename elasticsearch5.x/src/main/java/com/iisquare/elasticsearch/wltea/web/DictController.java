@@ -28,17 +28,12 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.solr.cloud.ZkController;
-import org.apache.solr.common.cloud.SolrZkClient;
-import org.apache.solr.core.CoreContainer;
 
-import com.iisquare.solr.wltea.dao.DaoBase;
-import com.iisquare.solr.wltea.dic.Dictionary;
-import com.iisquare.solr.wltea.lucene.IKAnalyzer;
-import com.iisquare.solr.wltea.service.DictService;
-import com.iisquare.solr.wltea.util.ApiUtil;
-import com.iisquare.solr.wltea.util.DPUtil;
-import com.iisquare.solr.wltea.util.HttpUtil;
+import com.iisquare.elasticsearch.wltea.dao.DaoBase;
+import com.iisquare.elasticsearch.wltea.lucene.IKAnalyzer;
+import com.iisquare.elasticsearch.wltea.service.DictService;
+import com.iisquare.elasticsearch.wltea.util.ApiUtil;
+import com.iisquare.elasticsearch.wltea.util.DPUtil;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -54,14 +49,13 @@ public class DictController extends ControllerBase {
 
 	@Override
 	public Object destroy(Object actionVal) {
-		// MongoUtil.close();
 		return super.destroy(actionVal);
 	}
 
 	public Object debugAction() throws Exception {
 		boolean debug = "1".equals(get("debug"));
 		DaoBase.isDebug = debug;
-		return displayText(ApiUtil.echoMessage(request, 0, "ok", debug));
+		return displayText(ApiUtil.echoMessage(0, "ok", debug));
 	}
 
 	public Object demoAction() throws Exception {
@@ -84,10 +78,10 @@ public class DictController extends ControllerBase {
 		String fieldName = "text";
 		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
 
-		IKAnalyzer indexAnalyzer = new IKAnalyzer(dictSerial, useSynonymIndex,
-				useSmartIndex, useArabicIndex, useEnglishIndex);
-		IKAnalyzer queryAnalyzer = new IKAnalyzer(dictSerial, useSynonymQuery,
-				useSmartQuery, useArabicQuery, useEnglishQuery);
+		IKAnalyzer indexAnalyzer = new IKAnalyzer(dictSerial,
+				useSynonymIndex, useSmartIndex, useArabicIndex, useEnglishIndex);
+		IKAnalyzer queryAnalyzer = new IKAnalyzer(dictSerial,
+				useSynonymQuery, useSmartQuery, useArabicQuery, useEnglishQuery);
 		Directory directory = null;
 		IndexWriter iwriter = null;
 		IndexReader ireader = null;
@@ -153,16 +147,15 @@ public class DictController extends ControllerBase {
 			queryAnalyzer.close();
 		}
 		if (null == map)
-			return displayText(ApiUtil.echoMessage(request, 1500, "error",
+			return displayText(ApiUtil.echoMessage(1500, "error",
 					keyword));
-		return displayText(ApiUtil.echoMessage(request, 0, keyword, map));
+		return displayText(ApiUtil.echoMessage(0, keyword, map));
 	}
 
 	public Object indexAction() throws Exception {
 		String keyword = get("keyword");
 		if (DPUtil.empty(keyword)) {
-			return displayText(ApiUtil.echoMessage(request, 0, "ok",
-					DPUtil.getCurrentSeconds()));
+			return displayText(ApiUtil.echoMessage(0, "ok", DPUtil.getCurrentSeconds()));
 		}
 		String dictSerial = get("dictSerial");
 		boolean useSmart = !DPUtil.empty(get("useSmart"));
@@ -203,9 +196,9 @@ public class DictController extends ControllerBase {
 			analyzer.close();
 		}
 		if (null == list)
-			return displayText(ApiUtil.echoMessage(request, 1500, "error",
+			return displayText(ApiUtil.echoMessage(1500, "error",
 					keyword));
-		return displayText(ApiUtil.echoMessage(request, 0, keyword, list));
+		return displayText(ApiUtil.echoMessage(0, keyword, list));
 	}
 
 	public Object runCommandAction() throws Exception {
@@ -213,106 +206,106 @@ public class DictController extends ControllerBase {
 		String dictSerial = get("dictSerial");
 		JSONObject jsonObject = DPUtil.parseJSON(cmd);
 		if (DPUtil.empty(jsonObject)) {
-			return displayText(ApiUtil.echoMessage(request, 1001, "命令无法识别",
+			return displayText(ApiUtil.echoMessage(1001, "命令无法识别",
 					null));
 		}
 		LinkedHashMap<String, Object> map = dictService.runCommand(dictSerial,
 				jsonObject);
 		map.put("command", cmd);
 		if (DPUtil.empty(map.get("status"))) {
-			return displayText(ApiUtil.echoMessage(request, 1500,
+			return displayText(ApiUtil.echoMessage(1500,
 					"部分或全部指令执行失败", map));
 		} else {
-			return displayText(ApiUtil.echoMessage(request, 0, "执行成功", map));
+			return displayText(ApiUtil.echoMessage(0, "执行成功", map));
 		}
 	}
 
-	public Object reloadAction() throws Exception {
-		String dictSerial = get("dictSerial");
-		Object forceNode = get("forceNode");
-		String[] dicts = getArray("dicts");
-		if (DPUtil.empty(dicts)) {
-			return displayText(ApiUtil.echoMessage(request, 1001, "参数错误", null));
-		}
-		if (!DPUtil.empty(forceNode)) {
-			LinkedHashMap<String, Boolean> map = Dictionary.getSingleton(
-					dictSerial).reload(dicts);
-			if (map.get("status")) {
-				return displayText(ApiUtil.echoMessage(request, 0, "载入成功", map));
-			} else {
-				return displayText(ApiUtil.echoMessage(request, 1500, "载入失败",
-						map));
-			}
-		}
-		if (params.containsKey("forceNode")) {
-			return displayText(ApiUtil.echoMessage(request, 1001,
-					"请勿将forceNode设置为空值", null));
-		}
-		CoreContainer cores = (CoreContainer) request
-				.getAttribute("org.apache.solr.CoreContainer");
-		if (cores == null) {
-			return displayText(ApiUtil.echoMessage(request, 1500,
-					"Missing request attribute org.apache.solr.CoreContainer.",
-					null));
-		}
-		ZkController zkController = cores.getZkController();
-		SolrZkClient zkClient = null;
-		if (null != zkController) {
-			zkClient = zkController.getZkClient();
-		}
-		if (null == zkClient || zkClient.isClosed()) {
-			return displayText(ApiUtil.echoMessage(request, 1500,
-					"zkClient 连接丢失", null));
-		}
-		String path = "/live_nodes";
-		List<String> list = null;
-		try {
-			if (!zkClient.exists(path, true)) {
-				return displayText(ApiUtil.echoMessage(request, 1500,
-						"存活节点不存在", null));
-			}
-			list = zkClient.getChildren(path, null, true);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return displayText(ApiUtil.echoMessage(request, 1500, "读取节点异常",
-					null));
-		}
-		if (null == list) {
-			return displayText(ApiUtil.echoMessage(request, 1500, "未读取到任何存活节点",
-					null));
-		}
-		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-		boolean status = true;
-		String queryString = request.getQueryString();
-		if (!DPUtil.empty(queryString)) {
-			queryString += "&";
-		}
-		queryString += "forceNode=1";
-		for (String nodeName : list) {
-			String url = "http://" + nodeName.split("_")[0] + appPath
-					+ controllerName + "/" + actionName + "/?" + queryString;
-			JSONObject result = DPUtil.parseJSON(HttpUtil.requestGet(url));
-			if (null == result) {
-				status = false;
-			} else {
-				status &= 0 == DPUtil.parseInt(result.get("code"));
-			}
-			map.put(nodeName, result);
-		}
-		if (status) {
-			return displayText(ApiUtil.echoMessage(request, 0, "集群执行载入成功", map));
-		} else {
-			return displayText(ApiUtil.echoMessage(request, 1500, "集群执行载入失败",
-					map));
-		}
-	}
+//	public Object reloadAction() throws Exception {
+//		String dictSerial = get("dictSerial");
+//		Object forceNode = get("forceNode");
+//		String[] dicts = getArray("dicts");
+//		if (DPUtil.empty(dicts)) {
+//			return displayText(ApiUtil.echoMessage(1001, "参数错误", null));
+//		}
+//		if (!DPUtil.empty(forceNode)) {
+//			LinkedHashMap<String, Boolean> map = Dictionary.getSingleton(
+//					dictSerial).reload(dicts);
+//			if (map.get("status")) {
+//				return displayText(ApiUtil.echoMessage(0, "载入成功", map));
+//			} else {
+//				return displayText(ApiUtil.echoMessage(1500, "载入失败",
+//						map));
+//			}
+//		}
+//		if (params.containsKey("forceNode")) {
+//			return displayText(ApiUtil.echoMessage(1001,
+//					"请勿将forceNode设置为空值", null));
+//		}
+//		CoreContainer cores = (CoreContainer) request
+//				.getAttribute("org.apache.solr.CoreContainer");
+//		if (cores == null) {
+//			return displayText(ApiUtil.echoMessage(1500,
+//					"Missing request attribute org.apache.solr.CoreContainer.",
+//					null));
+//		}
+//		ZkController zkController = cores.getZkController();
+//		SolrZkClient zkClient = null;
+//		if (null != zkController) {
+//			zkClient = zkController.getZkClient();
+//		}
+//		if (null == zkClient || zkClient.isClosed()) {
+//			return displayText(ApiUtil.echoMessage(1500,
+//					"zkClient 连接丢失", null));
+//		}
+//		String path = "/live_nodes";
+//		List<String> list = null;
+//		try {
+//			if (!zkClient.exists(path, true)) {
+//				return displayText(ApiUtil.echoMessage(1500,
+//						"存活节点不存在", null));
+//			}
+//			list = zkClient.getChildren(path, null, true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return displayText(ApiUtil.echoMessage(1500, "读取节点异常",
+//					null));
+//		}
+//		if (null == list) {
+//			return displayText(ApiUtil.echoMessage(1500, "未读取到任何存活节点",
+//					null));
+//		}
+//		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+//		boolean status = true;
+//		String queryString = request.getQueryString();
+//		if (!DPUtil.empty(queryString)) {
+//			queryString += "&";
+//		}
+//		queryString += "forceNode=1";
+//		for (String nodeName : list) {
+//			String url = "http://" + nodeName.split("_")[0] + appPath
+//					+ controllerName + "/" + actionName + "/?" + queryString;
+//			JSONObject result = DPUtil.parseJSON(HttpUtil.requestGet(url));
+//			if (null == result) {
+//				status = false;
+//			} else {
+//				status &= 0 == DPUtil.parseInt(result.get("code"));
+//			}
+//			map.put(nodeName, result);
+//		}
+//		if (status) {
+//			return displayText(ApiUtil.echoMessage(0, "集群执行载入成功", map));
+//		} else {
+//			return displayText(ApiUtil.echoMessage(1500, "集群执行载入失败",
+//					map));
+//		}
+//	}
 
 	public Object listAction() throws Exception {
 		String dictSerial = get("dictSerial");
 		LinkedHashMap<String, Object> returnMap = dictService.search(
 				dictSerial, params);
 		if (null == returnMap) {
-			return displayText(ApiUtil.echoMessage(request, 1002, "类型错误", null));
+			return displayText(ApiUtil.echoMessage(1002, "类型错误", null));
 		}
 		return displayJSON(returnMap);
 	}
@@ -320,35 +313,34 @@ public class DictController extends ControllerBase {
 	public Object updateAction() throws Exception {
 		Object text = get("text");
 		if (DPUtil.empty(text)) {
-			return displayText(ApiUtil.echoMessage(request, 1001, "参数错误", null));
+			return displayText(ApiUtil.echoMessage(1001, "参数错误", null));
 		}
 		int result = dictService.updateById(get("type"), get("dictSerial"),
 				get("id"), text,
 				params.containsKey("identity") ? get("identity") : null);
 		if (result >= 0) {
-			return displayText(ApiUtil.echoMessage(request, 0, "更新成功", result));
+			return displayText(ApiUtil.echoMessage(0, "更新成功", result));
 		}
-		return displayText(ApiUtil.echoMessage(request, 1500, "更新失败", result));
+		return displayText(ApiUtil.echoMessage(1500, "更新失败", result));
 	}
 
 	public Object deleteAction() throws Exception {
 		int result = dictService.deleteByIds(get("type"), get("dictSerial"),
 				(Object[]) getArray("ids"));
 		if (result >= 0) {
-			return displayText(ApiUtil.echoMessage(request, 0, "删除成功", result));
+			return displayText(ApiUtil.echoMessage(0, "删除成功", result));
 		}
-		return displayText(ApiUtil.echoMessage(request, 1500, "删除失败", result));
+		return displayText(ApiUtil.echoMessage(1500, "删除失败", result));
 	}
 
 	public Object insertAction() throws Exception {
 		String dictSerial = get("dictSerial");
 		Object[] texts = getArray("texts");
 		if (DPUtil.empty(texts)) {
-			return displayText(ApiUtil.echoMessage(request, 1001, "参数错误", null));
+			return displayText(ApiUtil.echoMessage(1001, "参数错误", null));
 		}
 		if (dictService.exist(get("type"), dictSerial, texts) > 0) {
-			return displayText(ApiUtil
-					.echoMessage(request, 1005, "信息已存在", null));
+			return displayText(ApiUtil.echoMessage(1005, "信息已存在", null));
 		}
 		int time = DPUtil.getCurrentSeconds();
 		List<DBObject> docs = new ArrayList<>();
@@ -360,12 +352,12 @@ public class DictController extends ControllerBase {
 		}
 		docs = dictService.insert(get("type"), dictSerial, docs);
 		if (null == docs) {
-			return displayText(ApiUtil.echoMessage(request, 1002, "类型错误", null));
+			return displayText(ApiUtil.echoMessage(1002, "类型错误", null));
 		}
 		String id = null;
 		if (1 == docs.size()) {
 			id = docs.get(0).get(dictService.getIdName()).toString();
 		}
-		return displayText(ApiUtil.echoMessage(request, 0, "添加成功", id));
+		return displayText(ApiUtil.echoMessage(0, "添加成功", id));
 	}
 }

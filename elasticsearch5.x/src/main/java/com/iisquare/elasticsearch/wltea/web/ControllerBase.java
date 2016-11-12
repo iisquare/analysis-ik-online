@@ -1,24 +1,25 @@
 package com.iisquare.elasticsearch.wltea.web;
 
-import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.elasticsearch.rest.BytesRestResponse;
+import org.elasticsearch.rest.RestChannel;
+import org.elasticsearch.rest.RestRequest;
+import org.elasticsearch.rest.RestStatus;
 
-import com.iisquare.solr.wltea.util.DPUtil;
+import com.iisquare.elasticsearch.wltea.util.DPUtil;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public abstract class ControllerBase {
 
-	public String appPath, rootPath;
+	public String appPath;
 	public String controllerName, actionName;
 
-	public HttpServletRequest request;
-	public HttpServletResponse response;
+	public RestRequest request;
+	public RestChannel channel;
 
 	public Map<String, Object> params; // 请求参数
 	public Map<String, Object> assign; // 视图数据Map对象
@@ -49,10 +50,8 @@ public abstract class ControllerBase {
 	/**
 	 * 获取URL地址
 	 * 
-	 * @param controller
-	 *            控制器名称
-	 * @param action
-	 *            方法名称
+	 * @param controller 控制器名称
+	 * @param action 方法名称
 	 */
 	public String url(String controller, String action) {
 		return appPath + "/" + controller + "/" + action;
@@ -62,9 +61,7 @@ public abstract class ControllerBase {
 	 * 输出文本信息
 	 */
 	protected Object displayText(String text) throws Exception {
-		PrintWriter out = response.getWriter();
-		out.print(text);
-		out.flush();
+		channel.sendResponse(new BytesRestResponse(RestStatus.OK, BytesRestResponse.TEXT_CONTENT_TYPE, text));
 		return null;
 	}
 
@@ -78,8 +75,7 @@ public abstract class ControllerBase {
 	/**
 	 * 输出JSON信息
 	 * 
-	 * @param object
-	 *            对输出对象
+	 * @param object 对输出对象
 	 */
 	protected Object displayJSON(Object object) throws Exception {
 		String result;
@@ -92,28 +88,18 @@ public abstract class ControllerBase {
 	}
 
 	/**
-	 * 重定向自定义URL地址
-	 */
-	protected Object redirect(String url) throws Exception {
-		response.sendRedirect(url);
-		return null;
-	}
-
-	/**
 	 * 获取请求参数
 	 * 
-	 * @param key
-	 *            参数名称
+	 * @param key 参数名称
 	 */
 	protected String get(String key) {
-		return DPUtil.parseString(params.get(key));
+		return request.param(key);
 	}
 
 	/**
 	 * 获取请求参数数组
 	 * 
-	 * @param key
-	 *            参数名称
+	 * @param key 参数名称
 	 */
 	@SuppressWarnings("unchecked")
 	protected String[] getArray(String key) {
@@ -124,8 +110,7 @@ public abstract class ControllerBase {
 			return (String[]) value;
 		}
 		if (value instanceof Map) {
-			return DPUtil.collectionToStringArray(((Map<String, Object>) value)
-					.values());
+			return DPUtil.collectionToStringArray(((Map<String, Object>) value).values());
 		}
 		return new String[] {};
 	}
@@ -133,14 +118,12 @@ public abstract class ControllerBase {
 	/**
 	 * 获取请求参数Map
 	 * 
-	 * @param key
-	 *            参数名称
+	 * @param key 参数名称
 	 */
 	@SuppressWarnings("unchecked")
 	protected Map<String, Object> getMap(String key) {
 		Object value = params.get(key);
-		if (null == value || !(value instanceof Map))
-			return new LinkedHashMap<>();
+		if (null == value || !(value instanceof Map)) return new LinkedHashMap<>();
 		return (Map<String, Object>) value;
 	}
 }

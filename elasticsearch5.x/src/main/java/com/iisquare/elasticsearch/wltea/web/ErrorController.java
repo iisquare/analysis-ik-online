@@ -1,23 +1,27 @@
 package com.iisquare.elasticsearch.wltea.web;
 
-import com.iisquare.solr.wltea.util.ApiUtil;
-import com.iisquare.solr.wltea.util.DPUtil;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import com.iisquare.elasticsearch.wltea.util.ApiUtil;
+import com.iisquare.elasticsearch.wltea.util.DPUtil;
+
 
 public class ErrorController extends ControllerBase {
 
 	public Object indexAction(Exception e) throws Exception {
 		if (!DPUtil.empty(get("debug"))) {
-			e.printStackTrace(response.getWriter());
+			OutputStream out = new ByteArrayOutputStream();
+			PrintWriter printWriter = new PrintWriter(out);
+			e.printStackTrace(printWriter);
+			return displayText(out.toString());
 		} else {
 			e.printStackTrace();
 		}
-		if (e instanceof NoSuchMethodException
-				|| e instanceof ClassNotFoundException) {
-			return displayText(ApiUtil.echoMessage(request, 404, "地址未识别",
-					e.getMessage()));
+		if (e instanceof NoSuchMethodException || e instanceof ClassNotFoundException) {
+			return displayText(ApiUtil.echoMessage(404, "地址未识别", e.getMessage()));
 		}
-		return displayText(ApiUtil.echoMessage(request, 500, "内部服务错误",
-				e.getMessage()));
+		return displayText(ApiUtil.echoMessage(500, "内部服务错误", e.getMessage()));
 	}
 
 }
