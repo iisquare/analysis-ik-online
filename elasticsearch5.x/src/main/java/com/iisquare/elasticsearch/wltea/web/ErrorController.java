@@ -2,7 +2,9 @@ package com.iisquare.elasticsearch.wltea.web;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
+
 import com.iisquare.elasticsearch.wltea.util.ApiUtil;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 
@@ -12,8 +14,8 @@ public class ErrorController extends ControllerBase {
 	public Object indexAction(Exception e) throws Exception {
 		if (!DPUtil.empty(get("debug"))) {
 			OutputStream out = new ByteArrayOutputStream();
-			PrintWriter printWriter = new PrintWriter(out);
-			e.printStackTrace(printWriter);
+			PrintStream print = new PrintStream(out);
+			e.printStackTrace(print);
 			return displayText(out.toString());
 		} else {
 			e.printStackTrace();
