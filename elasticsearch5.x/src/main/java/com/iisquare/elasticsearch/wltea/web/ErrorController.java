@@ -3,8 +3,6 @@ package com.iisquare.elasticsearch.wltea.web;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-
 import com.iisquare.elasticsearch.wltea.util.ApiUtil;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 

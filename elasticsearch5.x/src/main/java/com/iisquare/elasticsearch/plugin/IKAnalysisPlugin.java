@@ -14,7 +14,6 @@ public class IKAnalysisPlugin extends Plugin implements ActionPlugin {
 	// TODO:1.gradle to properties 2.config from properties 3.quto deploy to plugin directory
 	@Override
 	public List<Class<? extends RestHandler>> getRestHandlers() {
-		System.out.println("@IKAnalysisPlugin.getRestHandlers");
 		List<Class<? extends RestHandler>> list = new ArrayList<>();
 		list.add(ApplicationHandler.class);
 		return list;

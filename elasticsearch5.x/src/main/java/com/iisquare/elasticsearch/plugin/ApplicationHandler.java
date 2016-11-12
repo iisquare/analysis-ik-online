@@ -37,7 +37,6 @@ public class ApplicationHandler implements RestHandler {
 	public void handleRequest(RestRequest request, RestChannel channel, NodeClient client) throws Exception {
 		String controllerName = request.param("controllerName", defaultControllerName);
 		String actionName = request.param("actionName", defaultActionName);
-		System.out.println(request.params());
 		Object retVal = invoke(request, channel, controllerName, actionName, null);
 		if(null != retVal) retVal = invoke(request, channel, defaultErrorController, defaultErrorAction, retVal);
 		if(null != retVal) throw new Exception(retVal.toString());
