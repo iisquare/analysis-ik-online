@@ -12,6 +12,7 @@ public class IKAnalysisPlugin extends Plugin implements ActionPlugin {
 
 	@Override
 	public List<Class<? extends RestHandler>> getRestHandlers() {
+		System.out.println("@IKAnalysisPlugin.getRestHandlers");
 		List<Class<? extends RestHandler>> list = new ArrayList<>();
 		list.add(ApplicationHandler.class);
 		return list;
