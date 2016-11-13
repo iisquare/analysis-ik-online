@@ -199,9 +199,7 @@ public class DictService extends ServiceBase {
 		LinkedHashMap<String, Object> returnMap = getListTemplate();
 		BasicDBObject query = new BasicDBObject();
 		Object type = args.get("type");
-		if (DPUtil.empty(type)
-				|| !dictDao.selectTable(type.toString(), dictSerial))
-			return null;
+		if (DPUtil.empty(type) || !dictDao.selectTable(type.toString(), dictSerial)) return null;
 		Object text = args.get("text");
 		if (!DPUtil.empty(text)) {
 			query.append("text", Pattern.compile("^.*" + text + ".*$"));

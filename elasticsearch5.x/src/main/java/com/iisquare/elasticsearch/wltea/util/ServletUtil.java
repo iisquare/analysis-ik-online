@@ -42,19 +42,18 @@ public class ServletUtil {
 			Map<String, Object> map, List<String> keyList, String[] valueArray, int index, int length) {
 		int indexNext = index + 1;
 		String key = keyList.get(index);
-		if (indexNext >= length) { // 当前为最终位置，不存在下级元素
-			map.put(key, valueArray); // 默认取最后一个值
+		if(indexNext >= length) { // 当前为最终位置，不存在下级元素
+			map.put(key, valueArray.length > 0 ? valueArray[valueArray.length - 1] : ""); // 默认取最后一个值
 			return map;
 		}
 		String keyNext = keyList.get(indexNext); // 存在下级元素
-		if (0 == keyNext.length()) { // 下级元素为[]数组形式，应为最终位置
+		if(0 == keyNext.length()) { // 下级元素为[]数组形式，应为最终位置
 			map.put(key, valueArray);
 			return map;
 		}
 		/* 下级元素为KV形式，继续递归处理 */
 		Map<String, Object> subMap = (Map<String, Object>) map.get(key);
-		if (null == subMap)
-			subMap = new LinkedHashMap<String, Object>(); // 初始化下级Map
+		if(null == subMap) subMap = new LinkedHashMap<String, Object>(); // 初始化下级Map
 		map.put(key, generateParameterMap(subMap, keyList, valueArray, indexNext, length));
 		return map;
 	}

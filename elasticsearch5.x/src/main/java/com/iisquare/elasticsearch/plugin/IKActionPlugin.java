@@ -11,7 +11,7 @@ import org.elasticsearch.plugins.ActionPlugin;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.rest.RestHandler;
 
-public class IKAnalysisPlugin extends Plugin implements ActionPlugin {
+public class IKActionPlugin extends Plugin implements ActionPlugin {
 	
 	final Logger logger = ESLoggerFactory.getLogger(getClass());
 

@@ -302,8 +302,7 @@ public class DictController extends ControllerBase {
 
 	public Object listAction() throws Exception {
 		String dictSerial = get("dictSerial");
-		LinkedHashMap<String, Object> returnMap = dictService.search(
-				dictSerial, params);
+		LinkedHashMap<String, Object> returnMap = dictService.search(dictSerial, params);
 		if (null == returnMap) {
 			return displayText(ApiUtil.echoMessage(1002, "类型错误", null));
 		}
