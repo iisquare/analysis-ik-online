@@ -29,7 +29,7 @@ public class ApplicationHandler implements RestHandler {
 	@Inject
 	public ApplicationHandler(Settings settings, RestController controller) {
 		logger.debug("#trace@ApplicationHandler.construct");
-		appPath = "/_plugin/analysis-ik-online/";
+		appPath = "/_plugin/" + IKAnalysisPlugin.pluginName + "/";
 		controller.registerHandler(RestRequest.Method.GET, appPath + "{controllerName}/{actionName}", this);
 		controller.registerHandler(RestRequest.Method.POST, appPath + "{controllerName}/{actionName}", this);
 		String className = ControllerBase.class.getName();

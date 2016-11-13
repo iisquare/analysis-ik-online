@@ -69,8 +69,7 @@ public class DefaultConfig implements Configuration {
 	 */
 	private DefaultConfig() {
 		props = new Properties();
-		InputStream input = this.getClass().getClassLoader()
-				.getResourceAsStream(FILE_NAME);
+		InputStream input = this.getClass().getClassLoader().getResourceAsStream(FILE_NAME);
 		if (input != null) {
 			try {
 				props.loadFromXML(input);

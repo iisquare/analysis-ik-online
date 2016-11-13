@@ -1,10 +1,13 @@
 package com.iisquare.elasticsearch.plugin;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -22,6 +25,15 @@ import com.iisquare.elasticsearch.wltea.lucene.IKAnalyzerProvider;
 public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPlugin {
 	
 	final Logger logger = ESLoggerFactory.getLogger(getClass());
+	private static final String pluginDescriptorFileName = "plugin-descriptor.properties";
+	public static String pluginName = null; // 插件名称
+	
+	public IKAnalysisPlugin() throws IOException {
+		InputStream input = this.getClass().getClassLoader().getResourceAsStream(pluginDescriptorFileName);
+		Properties props = new Properties();
+		props.load(input);
+		pluginName = props.getProperty("name");
+	}
 
 	/**
 	 * 默认推荐分析器，可根据自身业务调整或在启动后采用_settings设置
@@ -40,7 +52,7 @@ public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPl
 	/**
 	 * Rest API用于词典管理和检索示例
 	 * TODO:
-	 * 	1.gradle to properties 2.config from properties 3.auto deploy to plugin directory
+	 * 	1.gradle to properties 2.done 3.auto deploy to plugin directory
 	 */
 	@Override
 	public List<Class<? extends RestHandler>> getRestHandlers() {
