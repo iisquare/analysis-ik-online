@@ -20,8 +20,42 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
 				useSmart.equals("true"), useArabic.equals("true"), useEnglish.equals("true"));
 	}
 
-	public static IKAnalyzerProvider getDefault(IndexSettings indexSettings, Environment env, String name, Settings settings) {
-		return new IKAnalyzerProvider(indexSettings, env, name, settings);
+	public static IKAnalyzerProvider enhanceIndexerForIndex(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+		IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
+		provider.analyzer.setDictSerial("suggest");
+		provider.analyzer.setUseSmart(true);
+		provider.analyzer.setUseArabic(false);
+		provider.analyzer.setUseEnglish(false);
+		provider.analyzer.setUseSynonym(true);
+		return provider;
+	}
+	
+	public static IKAnalyzerProvider enhanceIndexerForQuery(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+		IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
+		provider.analyzer.setDictSerial("suggest");
+		provider.analyzer.setUseSmart(true);
+		provider.analyzer.setUseArabic(false);
+		provider.analyzer.setUseEnglish(false);
+		provider.analyzer.setUseSynonym(false);
+		return provider;
+	}
+	
+	public static IKAnalyzerProvider enhanceQuerierForIndex(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+		IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
+		provider.analyzer.setUseSmart(false);
+		provider.analyzer.setUseArabic(true);
+		provider.analyzer.setUseEnglish(true);
+		provider.analyzer.setUseSynonym(false);
+		return provider;
+	}
+	
+	public static IKAnalyzerProvider enhanceQuerierForQuery(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+		IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
+		provider.analyzer.setUseSmart(true);
+		provider.analyzer.setUseArabic(true);
+		provider.analyzer.setUseEnglish(true);
+		provider.analyzer.setUseSynonym(true);
+		return provider;
 	}
 
 	@Override
