@@ -2,8 +2,10 @@ package com.iisquare.elasticsearch.plugin;
 
 import java.util.LinkedHashMap;
 
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.node.NodeClient;
 import org.elasticsearch.common.inject.Inject;
+import org.elasticsearch.common.logging.ESLoggerFactory;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestController;
@@ -15,6 +17,7 @@ import com.iisquare.elasticsearch.wltea.web.ControllerBase;
 
 public class ApplicationHandler implements RestHandler {
 	
+	final Logger logger = ESLoggerFactory.getLogger(getClass());
 	private String appPath, classNamePath;
 	public static String defaultControllerName = "index";
 	public static String defaultActionName = "index";
@@ -25,6 +28,7 @@ public class ApplicationHandler implements RestHandler {
 
 	@Inject
 	public ApplicationHandler(Settings settings, RestController controller) {
+		logger.debug("#trace@ApplicationHandler.construct");
 		appPath = "/_plugin/analysis-ik-online/";
 		controller.registerHandler(RestRequest.Method.GET, appPath + "{controllerName}/{actionName}", this);
 		controller.registerHandler(RestRequest.Method.POST, appPath + "{controllerName}/{actionName}", this);
@@ -35,6 +39,7 @@ public class ApplicationHandler implements RestHandler {
 
 	@Override
 	public void handleRequest(RestRequest request, RestChannel channel, NodeClient client) throws Exception {
+		logger.debug("#trace@ApplicationHandler.handleRequest");
 		String controllerName = request.param("controllerName", defaultControllerName);
 		String actionName = request.param("actionName", defaultActionName);
 		Object retVal = invoke(request, channel, controllerName, actionName, null);
