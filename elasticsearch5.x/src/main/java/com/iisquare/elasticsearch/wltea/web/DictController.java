@@ -28,12 +28,19 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
+import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequest;
+import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
+import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.http.HttpInfo;
 
 import com.iisquare.elasticsearch.wltea.dao.DaoBase;
+import com.iisquare.elasticsearch.wltea.dic.Dictionary;
 import com.iisquare.elasticsearch.wltea.lucene.IKAnalyzer;
 import com.iisquare.elasticsearch.wltea.service.DictService;
 import com.iisquare.elasticsearch.wltea.util.ApiUtil;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
+import com.iisquare.elasticsearch.wltea.util.HttpUtil;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -220,85 +227,69 @@ public class DictController extends ControllerBase {
 		}
 	}
 
-//	public Object reloadAction() throws Exception {
-//		String dictSerial = get("dictSerial");
-//		Object forceNode = get("forceNode");
-//		String[] dicts = getArray("dicts");
-//		if (DPUtil.empty(dicts)) {
-//			return displayText(ApiUtil.echoMessage(1001, "参数错误", null));
-//		}
-//		if (!DPUtil.empty(forceNode)) {
-//			LinkedHashMap<String, Boolean> map = Dictionary.getSingleton(
-//					dictSerial).reload(dicts);
-//			if (map.get("status")) {
-//				return displayText(ApiUtil.echoMessage(0, "载入成功", map));
-//			} else {
-//				return displayText(ApiUtil.echoMessage(1500, "载入失败",
-//						map));
-//			}
-//		}
-//		if (params.containsKey("forceNode")) {
-//			return displayText(ApiUtil.echoMessage(1001,
-//					"请勿将forceNode设置为空值", null));
-//		}
-//		CoreContainer cores = (CoreContainer) request
-//				.getAttribute("org.apache.solr.CoreContainer");
-//		if (cores == null) {
-//			return displayText(ApiUtil.echoMessage(1500,
-//					"Missing request attribute org.apache.solr.CoreContainer.",
-//					null));
-//		}
-//		ZkController zkController = cores.getZkController();
-//		SolrZkClient zkClient = null;
-//		if (null != zkController) {
-//			zkClient = zkController.getZkClient();
-//		}
-//		if (null == zkClient || zkClient.isClosed()) {
-//			return displayText(ApiUtil.echoMessage(1500,
-//					"zkClient 连接丢失", null));
-//		}
-//		String path = "/live_nodes";
-//		List<String> list = null;
-//		try {
-//			if (!zkClient.exists(path, true)) {
-//				return displayText(ApiUtil.echoMessage(1500,
-//						"存活节点不存在", null));
-//			}
-//			list = zkClient.getChildren(path, null, true);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return displayText(ApiUtil.echoMessage(1500, "读取节点异常",
-//					null));
-//		}
-//		if (null == list) {
-//			return displayText(ApiUtil.echoMessage(1500, "未读取到任何存活节点",
-//					null));
-//		}
-//		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-//		boolean status = true;
-//		String queryString = request.getQueryString();
-//		if (!DPUtil.empty(queryString)) {
-//			queryString += "&";
-//		}
-//		queryString += "forceNode=1";
-//		for (String nodeName : list) {
-//			String url = "http://" + nodeName.split("_")[0] + appPath
-//					+ controllerName + "/" + actionName + "/?" + queryString;
-//			JSONObject result = DPUtil.parseJSON(HttpUtil.requestGet(url));
-//			if (null == result) {
-//				status = false;
-//			} else {
-//				status &= 0 == DPUtil.parseInt(result.get("code"));
-//			}
-//			map.put(nodeName, result);
-//		}
-//		if (status) {
-//			return displayText(ApiUtil.echoMessage(0, "集群执行载入成功", map));
-//		} else {
-//			return displayText(ApiUtil.echoMessage(1500, "集群执行载入失败",
-//					map));
-//		}
-//	}
+	public Object reloadAction() throws Exception {
+		String dictSerial = get("dictSerial");
+		Object forceNode = get("forceNode");
+		String[] dicts = getArray("dicts");
+		if (DPUtil.empty(dicts)) {
+			return displayText(ApiUtil.echoMessage(1001, "参数错误", null));
+		}
+		if (!DPUtil.empty(forceNode)) {
+			LinkedHashMap<String, Boolean> map = Dictionary.getSingleton(
+					dictSerial).reload(dicts);
+			if (map.get("status")) {
+				return displayText(ApiUtil.echoMessage(0, "载入成功", map));
+			} else {
+				return displayText(ApiUtil.echoMessage(1500, "载入失败", map));
+			}
+		}
+		if (params.containsKey("forceNode")) {
+			return displayText(ApiUtil.echoMessage(1001, "请勿将forceNode设置为空值", null));
+		}
+		// 获取集群节点信息
+		String[] nodeIds = new String[]{"_all"};
+		final NodesInfoRequest nodesInfoRequest = new NodesInfoRequest(nodeIds);
+		NodesInfoResponse response = client.admin().cluster().nodesInfo(nodesInfoRequest).get();
+		// 解析集群节点信息
+		List<NodeInfo> nodeList = response.getNodes();
+		List<String> list = new ArrayList<>();
+		for (NodeInfo nodeInfo : nodeList) {
+			HttpInfo httpInfo = nodeInfo.getHttp();
+			TransportAddress publishAddress = httpInfo.getAddress().publishAddress();
+			list.add(publishAddress.getHost() + ":" + publishAddress.getPort());
+		}
+		if (list.isEmpty()) {
+			return displayText(ApiUtil.echoMessage(1500, "未读取到任何存活节点", null));
+		}
+		// 执行集群调度，重载全部节点词典
+		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+		boolean status = true;
+		String queryString = "";
+		String uri = request.uri();
+		int index = uri.indexOf("?");
+		if(-1 != index) {
+			queryString = uri.substring(index + 1);
+		}
+		if (!DPUtil.empty(queryString)) {
+			queryString += "&";
+		}
+		queryString += "forceNode=1";
+		for (String nodeName : list) {
+			String url = "http://" + nodeName + appPath + controllerName + "/" + actionName + "/?" + queryString;
+			JSONObject result = DPUtil.parseJSON(HttpUtil.requestGet(url));
+			if (null == result) {
+				status = false;
+			} else {
+				status &= 0 == DPUtil.parseInt(result.get("code"));
+			}
+			map.put(nodeName, result);
+		}
+		if (status) {
+			return displayText(ApiUtil.echoMessage(0, "集群执行载入成功", map));
+		} else {
+			return displayText(ApiUtil.echoMessage(1500, "集群执行载入失败", map));
+		}
+	}
 
 	public Object listAction() throws Exception {
 		String dictSerial = get("dictSerial");

@@ -42,24 +42,26 @@ public class ApplicationHandler implements RestHandler {
 		logger.debug("#trace@ApplicationHandler.handleRequest");
 		String controllerName = request.param("controllerName", defaultControllerName);
 		String actionName = request.param("actionName", defaultActionName);
-		Object retVal = invoke(request, channel, controllerName, actionName, null);
-		if(null != retVal) retVal = invoke(request, channel, defaultErrorController, defaultErrorAction, retVal);
+		Object retVal = invoke(request, channel, client, controllerName, actionName, null);
+		if(null != retVal) retVal = invoke(request,
+				channel, client, defaultErrorController, defaultErrorAction, retVal);
 		if(null != retVal) throw new Exception(retVal.toString());
 	}
 	
 	private Exception invoke(RestRequest request,
-			RestChannel channel, String controllerName, String actionName, Object arg) {
+			RestChannel channel, NodeClient client, String controllerName, String actionName, Object arg) {
 		Class<?> controller;
 		try {
 			controller = Class.forName(classNamePath + "."
 					+ controllerName.substring(0, 1).toUpperCase()
 					+ controllerName.substring(1) + defaultControllerSuffix);
 			ControllerBase instance = (ControllerBase) controller.newInstance();
-	    	instance.appPath = appPath;
+			instance.appPath = appPath;
 			instance.controllerName = controllerName;
 			instance.actionName = actionName;
 			instance.request = request;
 			instance.channel = channel;
+			instance.client = client;
 			instance.params = ServletUtil.parseParameterMap(request.params());
 			instance.assign = new LinkedHashMap<>();
 			Object initVal = instance.init();

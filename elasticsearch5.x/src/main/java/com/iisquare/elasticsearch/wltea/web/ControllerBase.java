@@ -3,6 +3,7 @@ package com.iisquare.elasticsearch.wltea.web;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.elasticsearch.client.node.NodeClient;
 import org.elasticsearch.rest.BytesRestResponse;
 import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestRequest;
@@ -20,6 +21,7 @@ public abstract class ControllerBase {
 
 	public RestRequest request;
 	public RestChannel channel;
+	public NodeClient client;
 
 	public Map<String, Object> params; // 请求参数
 	public Map<String, Object> assign; // 视图数据Map对象
