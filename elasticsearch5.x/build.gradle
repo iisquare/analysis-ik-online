@@ -6,10 +6,14 @@ apply plugin: 'idea'
 
 // 项目配置
 version = '0.1'
-archivesBaseName = 'ik-elasticsearch5.x'
+archivesBaseName = 'analysis-ik-online'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+// 插件配置
+def pluginClassName = 'com.iisquare.elasticsearch.plugin.IKAnalysisPlugin'
+def description = 'Chinese analysis with dictionary online manage.'
 
 // 仓库
 repositories {
@@ -21,32 +25,81 @@ repositories {
 def elasticsearchVersion = '5.0.0'
 dependencies {
 	testCompile (
+	)
+	compile (
 		// elasticsearch
 		[group: 'org.elasticsearch.client', name: 'transport', version: elasticsearchVersion],
-		// elasticsearch plugin
-		//[group: 'org.elasticsearch.plugin', name: 'aggs-matrix-stats', version: elasticsearchVersion],
-		//[group: 'org.elasticsearch.plugin', name: 'ingest-common', version: elasticsearchVersion],
-		//[group: 'org.elasticsearch.plugin', name: 'lang-expression', version: elasticsearchVersion],
-		//[group: 'org.elasticsearch.plugin', name: 'lang-groovy', version: elasticsearchVersion],
-		//[group: 'org.elasticsearch.plugin', name: 'lang-mustache', version: elasticsearchVersion],
-		//[group: 'org.elasticsearch.plugin', name: 'lang-painless', version: elasticsearchVersion],
-		//[group: 'org.elasticsearch.plugin', name: 'percolator', version: elasticsearchVersion],
-		//[group: 'org.elasticsearch.plugin', name: 'reindex', version: elasticsearchVersion],
-		//[group: 'org.elasticsearch.plugin', name: 'transport-netty3', version: elasticsearchVersion],
-		[group: 'org.elasticsearch.plugin', name: 'transport-netty4', version: elasticsearchVersion],
 		// httpclient
 		[group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'],
 		// log4j
 		[group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'],
-    )
-	compile (
 		// mongo
 		[group: 'org.mongodb', name: 'mongo-java-driver', version: '2.13.2'],
 	)
 	// JSON
 	compile (group: 'net.sf.json-lib', name: 'json-lib', version: '2.4', classifier: 'jdk15') {
 		 exclude group: 'commons-beanutils', module: 'commons-beanutils'
+		 exclude group: 'commons-logging', module: 'commons-logging'
 	}
-	compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.2'
 }
 
+configurations {
+	runtime.exclude group: 'org.elasticsearch.client', module: 'transport'
+}
+
+// 清除上次的编译过的文件
+task clearProject(type:Delete){
+	delete 'build', 'target'
+}
+
+// 依赖编译，然后打包JAR
+task taskJar(type:Jar, dependsOn: compileJava) {
+	from 'build/classes/main'
+	destinationDir = file('build/libs')
+}
+
+// 拷贝配置文件
+task generateConfigFiles(type: Copy, dependsOn: [taskJar]) {
+	from('config') {
+		include '*.xml', '*.properties'
+	}
+	into 'build/libs'
+	
+	def data = [
+		'targetCompatibility' : "${targetCompatibility}",
+		'elasticsearchVersion' : "${elasticsearchVersion}",
+		'archivesBaseName' : "${archivesBaseName}",
+		'version' : "${version}",
+		'pluginClassName' : "${pluginClassName}",
+		'description' : "${description}"
+	]
+	def inputFile = new File('config/plugin-descriptor.properties')
+	def outputFile = new File('build/libs/plugin-descriptor.properties')
+	def printWriter = outputFile.newPrintWriter()
+	inputFile.eachLine { line->
+		line = line.replaceAll(/\$\{(\w+)\}/, {data[it[1]]})
+		println line
+		printWriter.println(line)
+	}
+	printWriter.flush()
+	printWriter.close()
+}
+generateConfigFiles.mustRunAfter [clearProject]
+
+// 生成插件压缩文件
+task zipPlugin(type: Zip, dependsOn: [generateConfigFiles]) {
+	into ('elasticsearch') {
+		from configurations.runtime
+			from('build/libs') {
+			include '*.jar', '*.xml', '*.properties'
+		}
+	}
+}
+
+// 把JAR复制到目标目录
+task release(type: Copy, dependsOn: [clearProject, zipPlugin]) {
+	from('build/distributions') {
+		include '*.zip'
+	}
+	into ('target')
+}
