@@ -44,8 +44,6 @@ public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPl
 		if(null == input) { // 当前运行路径不存在，从插件运行路径获取
 			pluginLoadPath = pluginPath;
 			input = new FileInputStream(pluginPath + pluginDescriptorFileName);
-		} else {
-			pluginLoadPath = "./";
 		}
 		logger.info("pluginPath is " + pluginPath);
 		logger.info("pluginLoadPath is " + pluginLoadPath);

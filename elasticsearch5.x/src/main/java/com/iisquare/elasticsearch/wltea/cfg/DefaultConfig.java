@@ -72,7 +72,11 @@ public class DefaultConfig implements Configuration {
 		props = new Properties();
 		InputStream input = null;
 		try {
-			input = new FileInputStream(IKAnalysisPlugin.pluginLoadPath + FILE_NAME);
+			if(null == IKAnalysisPlugin.pluginLoadPath) {
+				input = getClass().getClassLoader().getResourceAsStream(FILE_NAME);
+			} else {
+				input = new FileInputStream(IKAnalysisPlugin.pluginLoadPath + FILE_NAME);
+			}
 			props.loadFromXML(input);
 			parseConfig();
 		} catch (Exception e) {
