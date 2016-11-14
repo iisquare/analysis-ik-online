@@ -45,6 +45,7 @@ dependencies {
 
 configurations {
 	runtime.exclude group: 'org.elasticsearch.client', module: 'transport'
+	runtime.exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
 }
 
 // 清除上次的编译过的文件
@@ -64,27 +65,28 @@ task generateConfigFiles(type: Copy, dependsOn: [taskJar]) {
 		include '*.xml', '*.properties'
 	}
 	into 'build/libs'
-	
-	def data = [
-		'targetCompatibility' : "${targetCompatibility}",
-		'elasticsearchVersion' : "${elasticsearchVersion}",
-		'archivesBaseName' : "${archivesBaseName}",
-		'version' : "${version}",
-		'pluginClassName' : "${pluginClassName}",
-		'description' : "${description}"
-	]
-	def inputFile = new File('config/plugin-descriptor.properties')
-	def outputFile = new File('build/libs/plugin-descriptor.properties')
-	def printWriter = outputFile.newPrintWriter()
-	inputFile.eachLine { line->
-		line = line.replaceAll(/\$\{(\w+)\}/, {data[it[1]]})
-		println line
-		printWriter.println(line)
+	doLast {
+		def data = [
+			'targetCompatibility' : "${targetCompatibility}",
+			'elasticsearchVersion' : "${elasticsearchVersion}",
+			'archivesBaseName' : "${archivesBaseName}",
+			'version' : "${version}",
+			'pluginClassName' : "${pluginClassName}",
+			'description' : "${description}"
+		]
+		def inputFile = new File('config/plugin-descriptor.properties')
+		def outputFile = new File('build/libs/plugin-descriptor.properties')
+		def printWriter = outputFile.newPrintWriter()
+		inputFile.eachLine { line->
+			line = line.replaceAll(/\$\{(\w+)\}/, {data[it[1]]})
+			println line
+			printWriter.println(line)
+		}
+		printWriter.flush()
+		printWriter.close()
 	}
-	printWriter.flush()
-	printWriter.close()
 }
-generateConfigFiles.mustRunAfter [clearProject]
+//generateConfigFiles.mustRunAfter [clearProject]
 
 // 生成插件压缩文件
 task zipPlugin(type: Zip, dependsOn: [generateConfigFiles]) {
