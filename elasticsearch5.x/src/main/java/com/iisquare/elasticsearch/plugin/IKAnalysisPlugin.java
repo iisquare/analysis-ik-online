@@ -69,8 +69,6 @@ public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPl
 	
 	/**
 	 * Rest API用于词典管理和检索示例
-	 * TODO:
-	 * 	1.gradle to properties 2.done 3.auto deploy to plugin directory
 	 */
 	@Override
 	public List<Class<? extends RestHandler>> getRestHandlers() {

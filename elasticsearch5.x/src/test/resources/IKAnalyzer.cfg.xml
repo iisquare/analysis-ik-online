@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">  
+<properties>  
+	<comment>IK Analyzer 扩展配置</comment>
+	<entry key="host">127.0.0.1</entry> 
+	<entry key="port">27017</entry> 
+	<entry key="authDatabase">admin</entry> 
+	<entry key="userName">root</entry> 
+	<entry key="password">admin888</entry>
+	<entry key="initDictSerials">suggest</entry>
+	<entry key="dictDatabase">lucene</entry>
+	<entry key="dictWord">dict.word</entry>
+	<entry key="dictStopword">dict.stopword</entry>
+	<entry key="dictQuantifier">dict.quantifier</entry>
+	<entry key="dictSynonym">dict.synonym</entry>
+</properties>

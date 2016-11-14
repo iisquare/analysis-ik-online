@@ -48,6 +48,18 @@ configurations {
 	runtime.exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
 }
 
+// 部署测试文件
+task deployTest() {
+	for(node in ['single', 'node1', 'node2', 'node3']) {
+		delete "server/example/${node}/plugins/"
+		copy {
+			from 'src/test/resources'
+			into "server/example/${node}/plugins/${archivesBaseName}"
+			include '*.properties'
+		}
+	}
+}
+
 // 清除上次的编译过的文件
 task clearProject(type:Delete){
 	delete 'build', 'target'
@@ -98,7 +110,7 @@ task zipPlugin(type: Zip, dependsOn: [generateConfigFiles]) {
 	}
 }
 
-// 把JAR复制到目标目录
+// 复制插件压缩包到目标目录
 task release(type: Copy, dependsOn: [clearProject, zipPlugin]) {
 	from('build/distributions') {
 		include '*.zip'
