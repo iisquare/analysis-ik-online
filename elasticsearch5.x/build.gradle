@@ -36,10 +36,10 @@ dependencies {
 		// mongo
 		[group: 'org.mongodb', name: 'mongo-java-driver', version: '2.13.2'],
 	)
-	// JSON
+	// json
 	compile (group: 'net.sf.json-lib', name: 'json-lib', version: '2.4', classifier: 'jdk15') {
-		 exclude group: 'commons-beanutils', module: 'commons-beanutils'
-		 exclude group: 'commons-logging', module: 'commons-logging'
+		exclude group: 'commons-beanutils', module: 'commons-beanutils'
+		exclude group: 'commons-logging', module: 'commons-logging'
 	}
 }
 

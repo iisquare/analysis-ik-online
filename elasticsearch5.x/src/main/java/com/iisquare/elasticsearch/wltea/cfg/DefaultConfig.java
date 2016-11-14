@@ -25,11 +25,12 @@
  */
 package com.iisquare.elasticsearch.wltea.cfg;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
+import com.iisquare.elasticsearch.plugin.IKAnalysisPlugin;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 
 /**
@@ -69,16 +70,17 @@ public class DefaultConfig implements Configuration {
 	 */
 	private DefaultConfig() {
 		props = new Properties();
-		InputStream input = this.getClass().getClassLoader().getResourceAsStream(FILE_NAME);
-		if (input != null) {
+		InputStream input = null;
+		try {
+			input = new FileInputStream(IKAnalysisPlugin.pluginLoadPath + FILE_NAME);
+			props.loadFromXML(input);
+			parseConfig();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
 			try {
-				props.loadFromXML(input);
-				parseConfig();
-			} catch (InvalidPropertiesFormatException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+				if(null != input) input.close();
+			} catch (IOException e) {}
 		}
 	}
 
