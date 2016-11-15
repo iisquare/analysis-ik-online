@@ -52,7 +52,7 @@
 
 > **默认分析器**
 
-在IKAnalysisPlugin中，默认提供了四个分析器，分别是：
+在IKAnalysisPlugin中，默认提供了四种分析器，分别是：
 
 ```
 map.put("text_ik_i_index", IKAnalyzerProvider::enhanceIndexerForIndex);

@@ -49,7 +49,7 @@
 	</servlet-mapping>
 	```
 
-9. 拷贝solr-4.10.4/example/solr/collection1目录到/data/solr家目录，参照analysis-ik-online/solr4.xconfig/schema.xml修改文档模板。
+9. 拷贝solr-4.10.4/example/solr/collection1目录到/data/solr家目录，参照analysis-ik-online/solr4.x/config/schema.xml修改文档模板。
 10. 拷贝solr-4.10.4/resources/log4j.properties至tomcat/webapps/solr/WEB-INF/classes/目录，自定义输出日志。
 
 
