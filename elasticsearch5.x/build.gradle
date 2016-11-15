@@ -5,7 +5,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 
 // 项目配置
-version = '0.1'
+version = '0.0.1'
 archivesBaseName = 'analysis-ik-online'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -104,7 +104,7 @@ task generateConfigFiles(type: Copy, dependsOn: [taskJar]) {
 task zipPlugin(type: Zip, dependsOn: [generateConfigFiles]) {
 	into ('elasticsearch') {
 		from configurations.runtime
-			from('build/libs') {
+		from('build/libs') {
 			include '*.jar', '*.xml', '*.properties'
 		}
 	}
