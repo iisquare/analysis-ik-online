@@ -5,7 +5,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 
 // 项目配置
-version = '0.1'
+version = '0.0.1'
 archivesBaseName = 'ik-solr6.x'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -32,6 +32,10 @@ dependencies {
 	)
 }
 
+configurations {
+	runtime.exclude group: 'org.apache.solr', module: 'solr-core'
+}
+
 // 依赖编译，然后打包JAR
 task taskJar(type:Jar, dependsOn: compileJava) {
 	from 'build/classes/main'
@@ -45,6 +49,7 @@ task clearProject(type:Delete){
 
 // 把JAR复制到目标目录
 task release(type: Copy,dependsOn: [clearProject, taskJar]) {
+	from configurations.runtime
 	from('build/libs') {
 		include '*.jar'
 	}
