@@ -32,3 +32,27 @@ POST _analyze
   "text":     "请参照API接口文档管理词库"
 }
 ```
+
+> **映射配置**
+
+```
+{
+	"mappings": {
+		"default": {
+			"properties": {
+            	"position" : {
+                	"type" : "geo_point"
+                },
+				"keyword": {
+					"type": "text",
+					"analyzer": "text_ik_q_index",
+                    "search_analyzer": "text_ik_q_query",
+                    "search_quote_analyzer": "text_ik_q_index"
+				}
+			}
+		}
+	}
+}
+```
+
+Tips:Mapping支持的字段类型，可参照org.elasticsearch.index.mapper.TypeParsers.java文件。
