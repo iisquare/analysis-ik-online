@@ -1,6 +1,7 @@
 package com.iisquare.elasticsearch.wltea.web;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.client.node.NodeClient;
@@ -97,10 +98,12 @@ public abstract class ControllerBase {
 	@SuppressWarnings("unchecked")
 	protected String[] getArray(String key) {
 		Object value = params.get(key);
-		if (null == value)
-			return new String[] {};
+		if (null == value) return new String[] {};
 		if (value.getClass().isArray()) {
 			return (String[]) value;
+		}
+		if (value instanceof List) {
+			return DPUtil.collectionToStringArray((List<?>) value);
 		}
 		if (value instanceof Map) {
 			return DPUtil.collectionToStringArray(((Map<String, Object>) value).values());

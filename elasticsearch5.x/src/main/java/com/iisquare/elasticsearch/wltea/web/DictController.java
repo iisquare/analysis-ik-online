@@ -312,8 +312,7 @@ public class DictController extends ControllerBase {
 	}
 
 	public Object deleteAction() throws Exception {
-		int result = dictService.deleteByIds(get("type"), get("dictSerial"),
-				(Object[]) getArray("ids"));
+		int result = dictService.deleteByIds(get("type"), get("dictSerial"), (Object[]) getArray("ids"));
 		if (result >= 0) {
 			return displayText(ApiUtil.echoMessage(0, "删除成功", result));
 		}
