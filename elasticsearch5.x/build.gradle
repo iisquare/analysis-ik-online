@@ -71,7 +71,7 @@ task taskJar(type:Jar, dependsOn: compileJava) {
 // 拷贝配置文件
 task generateConfigFiles(type: Copy, dependsOn: [taskJar]) {
 	from('config') {
-		include '*.xml', '*.properties'
+		include '*.xml', '*.properties', 'plugin-security.policy'
 	}
 	into 'build/libs'
 	doLast {
@@ -102,7 +102,7 @@ task zipPlugin(type: Zip, dependsOn: [generateConfigFiles]) {
 	into ('elasticsearch') {
 		from configurations.runtime
 		from('build/libs') {
-			include '*.jar', '*.xml', '*.properties'
+			include '*.jar', '*.xml', '*.properties', '*.policy'
 		}
 	}
 }

@@ -17,6 +17,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.common.logging.ESLoggerFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -26,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class DPUtil {
 
+	static final Logger logger = ESLoggerFactory.getLogger(DPUtil.class);
 	public static final String regexDouble = "^-?\\d+(\\.\\d)*";
 	public static final String regexSafeImplode = "^[\\w_]+$";
 
@@ -720,6 +724,7 @@ public class DPUtil {
 		try {
 			return new ObjectMapper().readValue(json, Object.class);
 		} catch (IOException e) {
+			logger.warn(e);
 			return null;
 		}
 	}
@@ -731,6 +736,7 @@ public class DPUtil {
 		try {
 			return new ObjectMapper().writeValueAsString(object);
 		} catch (Exception e) {
+			logger.warn(e);
 			return null;
 		}
 	}
