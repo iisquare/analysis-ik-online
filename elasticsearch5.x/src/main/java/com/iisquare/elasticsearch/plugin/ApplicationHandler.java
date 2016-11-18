@@ -1,16 +1,22 @@
 package com.iisquare.elasticsearch.plugin;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.node.NodeClient;
+import org.elasticsearch.common.bytes.BytesReference;
+import org.elasticsearch.common.collect.Tuple;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.logging.ESLoggerFactory;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.xcontent.XContentHelper;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestController;
 import org.elasticsearch.rest.RestHandler;
 import org.elasticsearch.rest.RestRequest;
+import org.elasticsearch.rest.action.RestActions;
 
 import com.iisquare.elasticsearch.wltea.util.ServletUtil;
 import com.iisquare.elasticsearch.wltea.web.ControllerBase;
@@ -62,8 +68,13 @@ public class ApplicationHandler implements RestHandler {
 			instance.request = request;
 			instance.channel = channel;
 			instance.client = client;
-			instance.params = ServletUtil.parseParameterMap(request.params());
 			instance.assign = new LinkedHashMap<>();
+			if(RestActions.hasBodyContent(request)) {
+				BytesReference content = RestActions.getRestContent(request);
+				Tuple<XContentType, Map<String, Object>> tuple = XContentHelper.convertToMap(content, true);
+				if(XContentType.JSON == tuple.v1()) instance.params = tuple.v2();
+			}
+			if(null == instance.params) instance.params = ServletUtil.parseParameterMap(request.params());
 			Object initVal = instance.init();
 			if(null != initVal) return new Exception("initError");
 			Object actionVal;
