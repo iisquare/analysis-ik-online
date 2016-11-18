@@ -5,8 +5,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-
-import net.sf.json.JSONObject;
+import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -211,13 +210,11 @@ public class DictController extends ControllerBase {
 	public Object runCommandAction() throws Exception {
 		String cmd = get("cmd");
 		String dictSerial = get("dictSerial");
-		JSONObject jsonObject = DPUtil.parseJSON(cmd);
+		Object jsonObject = DPUtil.parseJSON(cmd);
 		if (DPUtil.empty(jsonObject)) {
-			return displayText(ApiUtil.echoMessage(1001, "命令无法识别",
-					null));
+			return displayText(ApiUtil.echoMessage(1001, "命令无法识别", null));
 		}
-		LinkedHashMap<String, Object> map = dictService.runCommand(dictSerial,
-				jsonObject);
+		LinkedHashMap<String, Object> map = dictService.runCommand(dictSerial, (LinkedHashMap<?, ?>) jsonObject);
 		map.put("command", cmd);
 		if (DPUtil.empty(map.get("status"))) {
 			return displayText(ApiUtil.echoMessage(1500,
@@ -276,11 +273,11 @@ public class DictController extends ControllerBase {
 		queryString += "forceNode=1";
 		for (String nodeName : list) {
 			String url = "http://" + nodeName + appPath + controllerName + "/" + actionName + "/?" + queryString;
-			JSONObject result = DPUtil.parseJSON(HttpUtil.requestGet(url));
+			Object result = DPUtil.parseJSON(HttpUtil.requestGet(url));
 			if (null == result) {
 				status = false;
 			} else {
-				status &= 0 == DPUtil.parseInt(result.get("code"));
+				status &= 0 == DPUtil.parseInt(((Map<?, ?>) result).get("code"));
 			}
 			map.put(nodeName, result);
 		}

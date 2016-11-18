@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import com.iisquare.elasticsearch.wltea.dao.DictDao;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 import com.iisquare.elasticsearch.wltea.util.MongoUtil;
@@ -33,19 +30,32 @@ public class DictService extends ServiceBase {
 	/**
 	 * 通过JSON命令处理词典
 	 * 
-	 * @param cmd
-	 *            { dicName : { // 词典名称 insert : [{ // 添加 text : "内容，不能为空",
-	 *            identity : "自定义标示（分类_ID），null时自定转为空字符串" }], update : [{ // 修改
-	 *            from : { // 至少要设置一个查询条件 text : "不设置该key时，不作为查询条件", identity :
-	 *            "不设置该key时，不作为查询条件" }, to : { text : "内容，不能为空", identity :
-	 *            "自定义标示（分类_ID），null时自定转为空字符串" } }], delete : [{ // 删除 text :
-	 *            "不设置该key时，不作为查询条件", identity : "不设置该key时，不作为查询条件" }] } }
+	 * @param cmd {
+	 * 		dicName : { // 词典名称
+	 * 			insert : [{ // 添加
+	 * 				text : "内容，不能为空",
+	 *				identity : "自定义标示（分类_ID），null时自定转为空字符串"
+	 *			}],
+	 *			update : [{ // 修改
+	 *				from : { // 至少要设置一个查询条件
+	 *					text : "不设置该key时，不作为查询条件",
+	 *					identity : "不设置该key时，不作为查询条件"
+	 *				},
+	 *				to : {
+	 *					text : "内容，不能为空",
+	 *					identity : "自定义标示（分类_ID），null时自定转为空字符串"
+	 *				}
+	 *			}],
+	 *			delete : [{ // 删除
+	 *				text : "不设置该key时，不作为查询条件",
+	 *				identity : "不设置该key时，不作为查询条件"
+	 *			}]
+	 *		}
+	 *	}
 	 */
 	@SuppressWarnings("unchecked")
-	public LinkedHashMap<String, Object> runCommand(String dictSerial,
-			JSONObject cmd) {
-		String[] dicts = new String[] { "quantifier", "stopword", "synonym",
-				"word" };
+	public LinkedHashMap<String, Object> runCommand(String dictSerial, LinkedHashMap<?, ?> cmd) {
+		String[] dicts = new String[] { "quantifier", "stopword", "synonym", "word" };
 		String[] cruds = new String[] { "insert", "update", "delete" };
 		boolean status = true;
 		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
@@ -53,24 +63,21 @@ public class DictService extends ServiceBase {
 		int time = DPUtil.getCurrentSeconds();
 		for (String dict : dicts) {
 			Object object = cmd.get(dict);
-			if (DPUtil.empty(object) || !(object instanceof JSONObject))
-				continue;
-			if (!dictDao.selectTable(dict, dictSerial))
-				continue;
-			JSONObject cmdCrud = (JSONObject) object;
+			if (DPUtil.empty(object) || !(object instanceof LinkedHashMap)) continue;
+			if (!dictDao.selectTable(dict, dictSerial)) continue;
+			Map<?, ?> cmdCrud = (Map<?, ?>) object;
 			for (String crud : cruds) {
 				object = cmdCrud.get(crud);
-				if (DPUtil.empty(object) || !(object instanceof JSONArray))
-					continue;
-				JSONArray crudArray = (JSONArray) object;
-				Iterator<JSONObject> iter = crudArray.iterator();
+				if (DPUtil.empty(object) || !(object instanceof ArrayList)) continue;
+				ArrayList<LinkedHashMap<?, ?>> crudArray = (ArrayList<LinkedHashMap<?, ?>> ) object;
+				Iterator<LinkedHashMap<?, ?>> iter = crudArray.iterator();
 				LinkedHashMap<String, Object> crudMap = new LinkedHashMap<>();
 				switch (crud) {
 				case "insert": // {"word":{"insert":[{"text":"中文","identity":"test"},{"text":"分词","identity":"test"}]}}
 					List<DBObject> docs = new ArrayList<>();
 					ArrayList<Object> texts = new ArrayList<>();
 					while (iter.hasNext()) {
-						JSONObject crudItem = iter.next();
+						LinkedHashMap<?, ?> crudItem = iter.next();
 						Object text = crudItem.get("text");
 						Object identity = crudItem.get("identity");
 						if (DPUtil.empty(text))
@@ -108,21 +115,19 @@ public class DictService extends ServiceBase {
 				case "update": // {"word":{"update":[{"from":{"text":"分词"},"to":{"text":"词语","identity":"test"}}]}}
 					ArrayList<Integer> effectList = new ArrayList<>();
 					while (iter.hasNext()) {
-						JSONObject crudItem = iter.next();
+						LinkedHashMap<?, ?> crudItem = iter.next();
 						object = crudItem.get("from");
-						if (DPUtil.empty(object)
-								|| !(object instanceof JSONObject)) {
+						if (DPUtil.empty(object) || !(object instanceof LinkedHashMap)) {
 							effectList.add(null);
 							continue;
 						}
-						JSONObject updateFrom = (JSONObject) object;
+						LinkedHashMap<?, ?> updateFrom = (LinkedHashMap<?, ?>) object;
 						object = crudItem.get("to");
-						if (DPUtil.empty(object)
-								|| !(object instanceof JSONObject)) {
+						if (DPUtil.empty(object) || !(object instanceof LinkedHashMap<?, ?>)) {
 							effectList.add(null);
 							continue;
 						}
-						JSONObject updateTo = (JSONObject) object;
+						LinkedHashMap<?, ?> updateTo = (LinkedHashMap<?, ?>) object;
 						Object text = updateFrom.get("text");
 						Object identity = updateFrom.get("identity");
 						if (null == text && null == identity) {
@@ -159,7 +164,7 @@ public class DictService extends ServiceBase {
 				case "delete": // {"word":{"delete":[{"text":"分词"},{"text":"词语","identity":"test"}]}}
 					BasicDBList dbList = new BasicDBList();
 					while (iter.hasNext()) {
-						JSONObject crudItem = iter.next();
+						LinkedHashMap<?, ?> crudItem = iter.next();
 						Object text = crudItem.get("text");
 						Object identity = crudItem.get("identity");
 						if (null == text && null == identity) {

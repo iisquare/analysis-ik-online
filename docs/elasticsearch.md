@@ -16,10 +16,6 @@
 4. 执行org.elasticsearch.bootstrap.StartElasticsearchSingle.java
 5. 访问http://127.0.0.1:9200/
 
-	```
-	若执行时提示jar hell包冲突，可将build.gradle文件中configurations模块暂时注释掉，我们将尽快解决这个问题。
-	```
-
 > **项目发布**
 
 1. gradle release

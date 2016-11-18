@@ -1,5 +1,6 @@
 package com.iisquare.elasticsearch.wltea.util;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,7 +17,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 
@@ -407,14 +408,24 @@ public class DPUtil {
 	 * 深度复制对象信息
 	 */
 	public static Object clone(Object object) {
-		return JSONObject.fromObject(JSONObject.fromObject(object).toString());
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.readValue(mapper.writeValueAsString(object), Object.class);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**
 	 * 深度复制Bean信息
 	 */
 	public static Object clone(Object object, Class<?> beanClass) {
-		return JSONObject.toBean((JSONObject) clone(object), beanClass);
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.readValue(mapper.writeValueAsString(object), beanClass);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**
@@ -704,13 +715,24 @@ public class DPUtil {
 	/**
 	 * 解析JSON字符串
 	 */
-	public static JSONObject parseJSON(String json) {
-		if (empty(json))
-			return null;
+	public static Object parseJSON(String json) {
+		if (empty(json)) return null;
 		try {
-			return JSONObject.fromObject(json);
+			return new ObjectMapper().readValue(json, Object.class);
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	/**
+	 * 构建JSON字符串
+	 */
+	public static String buildJSON(Object object) {
+		try {
+			return new ObjectMapper().writeValueAsString(object);
 		} catch (Exception e) {
 			return null;
 		}
 	}
+	
 }

@@ -29,17 +29,14 @@ dependencies {
 	compile (
 		// elasticsearch
 		[group: 'org.elasticsearch.client', name: 'transport', version: elasticsearchVersion],
-		// httpclient
-		[group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'],
 		// log4j
 		[group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'],
 		// mongo
 		[group: 'org.mongodb', name: 'mongo-java-driver', version: '2.13.2'],
 	)
 	// json
-	compile (group: 'net.sf.json-lib', name: 'json-lib', version: '2.4', classifier: 'jdk15') {
-		exclude group: 'commons-beanutils', module: 'commons-beanutils'
-		exclude group: 'commons-logging', module: 'commons-logging'
+	compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.1') {
+		exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
 	}
 }
 

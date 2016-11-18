@@ -11,9 +11,6 @@ import org.elasticsearch.rest.RestStatus;
 
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 public abstract class ControllerBase {
 
 	public String appPath;
@@ -80,13 +77,7 @@ public abstract class ControllerBase {
 	 * @param object 对输出对象
 	 */
 	protected Object displayJSON(Object object) throws Exception {
-		String result;
-		if (object instanceof Map) {
-			result = JSONObject.fromObject(object).toString();
-		} else {
-			result = JSONArray.fromObject(object).toString();
-		}
-		return displayText(result);
+		return displayText(DPUtil.buildJSON(object));
 	}
 
 	/**
