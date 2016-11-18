@@ -86,7 +86,7 @@ public abstract class ControllerBase {
 	 * @param key 参数名称
 	 */
 	protected String get(String key) {
-		return request.param(key);
+		return DPUtil.parseString(params.get(key));
 	}
 
 	/**
