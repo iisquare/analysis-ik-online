@@ -22,7 +22,7 @@ repositories {
 }
 
 // 依赖
-def elasticsearchVersion = '5.0.0'
+def elasticsearchVersion = '5.0.1'
 dependencies {
 	testCompile (
 	)
