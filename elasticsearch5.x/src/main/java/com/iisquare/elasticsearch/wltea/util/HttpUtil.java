@@ -38,13 +38,20 @@ public class HttpUtil {
 		return null;
 	}
 
-	public static String requestPost(String url, List<NameValuePair> nvps) {
+	@SuppressWarnings("unchecked")
+	public static String requestPost(String url, Object nvps) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost(url);
 		if (null != nvps) {
 			StringEntity entity;
 			try {
-				entity = new UrlEncodedFormEntity(nvps);
+				if(nvps instanceof String) {
+					entity = new StringEntity((String) nvps);
+				} else if(nvps instanceof List) {
+					entity = new UrlEncodedFormEntity((List<? extends NameValuePair>) nvps);
+				} else {
+					return null;
+				}
 			} catch (UnsupportedEncodingException e) {
 				return null;
 			}
@@ -54,8 +61,7 @@ public class HttpUtil {
 		CloseableHttpResponse response = null;
 		try {
 			response = httpclient.execute(httpPost);
-			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
-				return null;
+			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) return null;
 			return EntityUtils.toString(response.getEntity());
 		} catch (IOException e) {
 		} finally {

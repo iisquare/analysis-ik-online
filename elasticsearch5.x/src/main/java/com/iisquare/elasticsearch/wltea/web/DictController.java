@@ -208,17 +208,16 @@ public class DictController extends ControllerBase {
 	}
 
 	public Object runCommandAction() throws Exception {
-		String cmd = get("cmd");
 		String dictSerial = get("dictSerial");
-		Object jsonObject = DPUtil.parseJSON(cmd);
+		Object jsonObject = params.get("cmd");
 		if (DPUtil.empty(jsonObject)) {
 			return displayText(ApiUtil.echoMessage(1001, "命令无法识别", null));
 		}
+		if(jsonObject instanceof String) jsonObject = DPUtil.parseJSON(jsonObject.toString());
 		LinkedHashMap<String, Object> map = dictService.runCommand(dictSerial, (LinkedHashMap<?, ?>) jsonObject);
-		map.put("command", cmd);
+		map.put("command", jsonObject);
 		if (DPUtil.empty(map.get("status"))) {
-			return displayText(ApiUtil.echoMessage(1500,
-					"部分或全部指令执行失败", map));
+			return displayText(ApiUtil.echoMessage(1500, "部分或全部指令执行失败", map));
 		} else {
 			return displayText(ApiUtil.echoMessage(0, "执行成功", map));
 		}
@@ -232,8 +231,7 @@ public class DictController extends ControllerBase {
 			return displayText(ApiUtil.echoMessage(1001, "参数错误", null));
 		}
 		if (!DPUtil.empty(forceNode)) {
-			LinkedHashMap<String, Boolean> map = Dictionary.getSingleton(
-					dictSerial).reload(dicts);
+			LinkedHashMap<String, Boolean> map = Dictionary.getSingleton(dictSerial).reload(dicts);
 			if (map.get("status")) {
 				return displayText(ApiUtil.echoMessage(0, "载入成功", map));
 			} else {
@@ -261,19 +259,10 @@ public class DictController extends ControllerBase {
 		// 执行集群调度，重载全部节点词典
 		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
 		boolean status = true;
-		String queryString = "";
-		String uri = request.uri();
-		int index = uri.indexOf("?");
-		if(-1 != index) {
-			queryString = uri.substring(index + 1);
-		}
-		if (!DPUtil.empty(queryString)) {
-			queryString += "&";
-		}
-		queryString += "forceNode=1";
 		for (String nodeName : list) {
-			String url = "http://" + nodeName + appPath + controllerName + "/" + actionName + "/?" + queryString;
-			Object result = DPUtil.parseJSON(HttpUtil.requestGet(url));
+			String url = "http://" + nodeName + appPath + controllerName + "/" + actionName;
+			params.put("forceNode", 1);
+			Object result = DPUtil.parseJSON(HttpUtil.requestPost(url, DPUtil.buildJSON(params)));
 			if (null == result) {
 				status = false;
 			} else {
