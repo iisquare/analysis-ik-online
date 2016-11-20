@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.logging.ESLoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentType;
 
 /**
  * 
@@ -409,30 +409,6 @@ public class DPUtil {
 	}
 
 	/**
-	 * 深度复制对象信息
-	 */
-	public static Object clone(Object object) {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.readValue(mapper.writeValueAsString(object), Object.class);
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
-	/**
-	 * 深度复制Bean信息
-	 */
-	public static Object clone(Object object, Class<?> beanClass) {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.readValue(mapper.writeValueAsString(object), beanClass);
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
-	/**
 	 * 将List转换为Set
 	 */
 	public static <T> Set<T> listToSet(List<T> list) {
@@ -722,7 +698,7 @@ public class DPUtil {
 	public static Object parseJSON(String json) {
 		if (empty(json)) return null;
 		try {
-			return new ObjectMapper().readValue(json, Object.class);
+			return XContentFactory.xContent(XContentType.JSON).createParser(json).mapOrdered();
 		} catch (IOException e) {
 			logger.warn(e);
 			return null;
@@ -732,10 +708,12 @@ public class DPUtil {
 	/**
 	 * 构建JSON字符串
 	 */
+	@SuppressWarnings("unchecked")
 	public static String buildJSON(Object object) {
+		if(null == object || !(object instanceof Map)) return null;
 		try {
-			return new ObjectMapper().writeValueAsString(object);
-		} catch (Exception e) {
+			return XContentFactory.jsonBuilder().map((Map<String, ?>) object).string();
+		} catch (IOException e) {
 			logger.warn(e);
 			return null;
 		}

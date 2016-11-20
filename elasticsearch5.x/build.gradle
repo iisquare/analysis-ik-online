@@ -34,10 +34,6 @@ dependencies {
 		// mongo
 		[group: 'org.mongodb', name: 'mongo-java-driver', version: '2.13.2'],
 	)
-	// json
-	compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.1') {
-		exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
-	}
 }
 
 configurations {
