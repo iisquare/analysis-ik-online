@@ -60,6 +60,7 @@ public class FrameServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		response.setContentType("text/html;charset=utf-8");
 		Object[] route = parse(request);
 		try {
