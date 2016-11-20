@@ -132,6 +132,7 @@ public class Dictionary {
 	 * @return Dictionary 单例对象
 	 */
 	public static Dictionary getSingleton(String dictSerial) {
+		if(null == dictSerial) dictSerial = "";
 		if (singletonMap.get(dictSerial) == null) {
 			synchronized (Dictionary.class) {
 				if (singletonMap.get(dictSerial) == null) {
