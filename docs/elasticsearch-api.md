@@ -14,7 +14,7 @@
 
 该插件的Solr API遵循PHP的QueryString处理方式，Elastcisearch API采用JSON格式数据作为请求参数，请参照[solr-api](./solr-api.md)文档，把/solr/ik/替换为插件的实际地址（默认为/_plugin/analysis-ik-online/），并将对应参数全部转换为JSON对象即可。
 
-在不使用POST方式传递JSON请求数据的情况下，部分接口的GET请求参数依然有效，如线调试开关/dict/debug/接口。另外，批量执行命令/dict/runCommand/接口的cmd参数可直接采用对象传递，也同时支持原对象字符串的方式。
+在不使用POST方式传递JSON请求数据的情况下，部分接口的GET请求参数依然有效，如在线调试开关/dict/debug/接口。另外，批量执行命令/dict/runCommand/接口的cmd参数可直接采用对象传递，也同时支持原对象字符串的方式。
 
 > **调用示例**
 
