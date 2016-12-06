@@ -28,6 +28,7 @@ package com.iisquare.elasticsearch.wltea.cfg;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.apache.logging.log4j.Logger;
@@ -192,6 +193,18 @@ public class DefaultConfig implements Configuration {
 
 	public void setInitDictSerials(String[] initDictSerials) {
 		this.initDictSerials = initDictSerials;
+	}
+
+	@Override
+	public String toString() {
+		return "DefaultConfig [props=" + props
+				+ ", host=" + host + ", authDatabase=" + authDatabase
+				+ ", userName=" + userName + ", password=" + password
+				+ ", dictDatabase=" + dictDatabase + ", dictWord=" + dictWord
+				+ ", dictStopword=" + dictStopword + ", dictQuantifier="
+				+ dictQuantifier + ", dictSynonym=" + dictSynonym + ", port="
+				+ port + ", initDictSerials="
+				+ Arrays.toString(initDictSerials) + "]";
 	}
 
 }

@@ -66,7 +66,7 @@ public class Dictionary {
 		configuration = DefaultConfig.getInstance();
 		LinkedHashMap<String, Boolean> map = reload(new String[] { "stopword", "quantifier", "word", "synonym" });
 		if (!map.get("status")) {
-			throw new RuntimeException("init dictionary error");
+			throw new RuntimeException("init dictionary error:" + configuration.toString());
 		}
 	}
 
