@@ -22,7 +22,7 @@ public class ErrorController extends ControllerBase {
 			e.printStackTrace(print);
 			return displayText(out.toString());
 		} else {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		}
 		if (e instanceof NoSuchMethodException || e instanceof ClassNotFoundException) {
 			return displayText(ApiUtil.echoMessage(404, "地址未识别", e.getMessage()));

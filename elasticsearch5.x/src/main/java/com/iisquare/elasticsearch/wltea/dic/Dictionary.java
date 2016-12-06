@@ -107,7 +107,7 @@ public class Dictionary {
 				map.put(dict, bool);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			status = false;
 		} finally {
 			// MongoUtil.close();
@@ -268,7 +268,7 @@ public class Dictionary {
 						.toCharArray());
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			return null;
 		} finally {
 			cursor.close();
@@ -304,7 +304,7 @@ public class Dictionary {
 				_SynonymDict = parser.build();
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			return false;
 		} finally {
 			cursor.close();

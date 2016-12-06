@@ -26,7 +26,7 @@ public class MongoUtil {
 		try {
 			mongoClient = new MongoClient(new ServerAddress(host, port), Arrays.asList(credential));
 		} catch (UnknownHostException e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			return null;
 		}
 		return mongoClient;

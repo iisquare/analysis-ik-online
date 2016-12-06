@@ -30,7 +30,7 @@ public class HttpUtil {
 			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) return null;
 			return EntityUtils.toString(response.getEntity());
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		} finally {
 			try {
 				if (null != response) response.close();
@@ -56,7 +56,7 @@ public class HttpUtil {
 					return null;
 				}
 			} catch (UnsupportedEncodingException e) {
-				logger.error(e);
+				logger.error(e.getMessage(), e);
 				return null;
 			}
 			entity.setContentEncoding("UTF-8");
@@ -68,7 +68,7 @@ public class HttpUtil {
 			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) return null;
 			return EntityUtils.toString(response.getEntity());
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		} finally {
 			try {
 				if (null != response) response.close();

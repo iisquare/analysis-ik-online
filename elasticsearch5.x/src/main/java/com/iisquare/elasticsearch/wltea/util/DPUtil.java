@@ -700,7 +700,7 @@ public class DPUtil {
 		try {
 			return XContentFactory.xContent(XContentType.JSON).createParser(json).mapOrdered();
 		} catch (IOException e) {
-			logger.warn(e);
+			logger.warn(e.getMessage(), e);
 			return null;
 		}
 	}
@@ -714,7 +714,7 @@ public class DPUtil {
 		try {
 			return XContentFactory.jsonBuilder().map((Map<String, ?>) object).string();
 		} catch (IOException e) {
-			logger.warn(e);
+			logger.warn(e.getMessage(), e);
 			return null;
 		}
 	}

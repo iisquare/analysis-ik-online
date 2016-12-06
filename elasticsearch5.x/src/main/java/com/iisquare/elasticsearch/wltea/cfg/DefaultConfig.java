@@ -84,7 +84,7 @@ public class DefaultConfig implements Configuration {
 			props.loadFromXML(input);
 			parseConfig();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		} finally {
 			try {
 				if(null != input) input.close();

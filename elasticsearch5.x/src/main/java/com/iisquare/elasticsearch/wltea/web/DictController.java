@@ -135,7 +135,7 @@ public class DictController extends ControllerBase {
 			map.put("docs", list);
 		} catch (Exception e) {
 			map = null;
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		} finally {
 			if (ireader != null) {
 				try {
@@ -188,7 +188,7 @@ public class DictController extends ControllerBase {
 			ts.end();
 		} catch (Exception e) {
 			list = null;
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		} finally {
 			if (ts != null) {
 				try {
