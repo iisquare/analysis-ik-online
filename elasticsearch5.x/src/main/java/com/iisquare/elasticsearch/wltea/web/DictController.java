@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -30,6 +31,7 @@ import org.apache.lucene.store.RAMDirectory;
 import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequest;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
+import org.elasticsearch.common.logging.ESLoggerFactory;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.http.HttpInfo;
 
@@ -44,7 +46,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 public class DictController extends ControllerBase {
-
+	final Logger logger = ESLoggerFactory.getLogger(getClass());
 	public DictService dictService;
 
 	@Override
@@ -133,21 +135,17 @@ public class DictController extends ControllerBase {
 			map.put("docs", list);
 		} catch (Exception e) {
 			map = null;
-			e.printStackTrace();
+			logger.error(e);
 		} finally {
 			if (ireader != null) {
 				try {
 					ireader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				} catch (IOException e) {}
 			}
 			if (directory != null) {
 				try {
 					directory.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				} catch (IOException e) {}
 			}
 			indexAnalyzer.close();
 			queryAnalyzer.close();
@@ -190,14 +188,12 @@ public class DictController extends ControllerBase {
 			ts.end();
 		} catch (Exception e) {
 			list = null;
-			e.printStackTrace();
+			logger.error(e);
 		} finally {
 			if (ts != null) {
 				try {
 					ts.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				} catch (IOException e) {}
 			}
 			analyzer.close();
 		}

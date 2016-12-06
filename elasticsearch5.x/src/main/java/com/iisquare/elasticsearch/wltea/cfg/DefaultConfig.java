@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.common.logging.ESLoggerFactory;
+
 import com.iisquare.elasticsearch.plugin.IKAnalysisPlugin;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 
@@ -38,6 +41,7 @@ import com.iisquare.elasticsearch.wltea.util.DPUtil;
  *
  */
 public class DefaultConfig implements Configuration {
+	final Logger logger = ESLoggerFactory.getLogger(getClass());
 	/*
 	 * 分词器配置文件路径
 	 */
@@ -80,7 +84,7 @@ public class DefaultConfig implements Configuration {
 			props.loadFromXML(input);
 			parseConfig();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 		} finally {
 			try {
 				if(null != input) input.close();

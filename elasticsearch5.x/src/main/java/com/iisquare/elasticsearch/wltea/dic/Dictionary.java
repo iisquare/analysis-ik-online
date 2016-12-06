@@ -29,12 +29,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.apache.lucene.analysis.synonym.SynonymMap;
+import org.elasticsearch.common.logging.ESLoggerFactory;
 
 import com.iisquare.elasticsearch.wltea.cfg.Configuration;
 import com.iisquare.elasticsearch.wltea.cfg.DefaultConfig;
@@ -50,7 +52,7 @@ import com.mongodb.MongoClient;
  * 词典管理类,单子模式
  */
 public class Dictionary {
-
+	final Logger logger = ESLoggerFactory.getLogger(getClass());
 	private static HashMap<String, Dictionary> singletonMap = new HashMap<String, Dictionary>(); // 词典单子实例
 	private DictSegment _MainDict;// 主词典对象
 	private DictSegment _StopWordDict; // 停止词词典
@@ -105,7 +107,7 @@ public class Dictionary {
 				map.put(dict, bool);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			status = false;
 		} finally {
 			// MongoUtil.close();
@@ -266,6 +268,7 @@ public class Dictionary {
 						.toCharArray());
 			}
 		} catch (Exception e) {
+			logger.error(e);
 			return null;
 		} finally {
 			cursor.close();
@@ -301,6 +304,7 @@ public class Dictionary {
 				_SynonymDict = parser.build();
 			}
 		} catch (Exception e) {
+			logger.error(e);
 			return false;
 		} finally {
 			cursor.close();

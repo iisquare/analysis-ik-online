@@ -14,23 +14,26 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.common.logging.ESLoggerFactory;
 
 public class HttpUtil {
 
+	final static Logger logger = ESLoggerFactory.getLogger(HttpUtil.class);
+	
 	public static String requestGet(String url) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(url);
 		CloseableHttpResponse response = null;
 		try {
 			response = httpclient.execute(httpGet);
-			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
-				return null;
+			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) return null;
 			return EntityUtils.toString(response.getEntity());
 		} catch (IOException e) {
+			logger.error(e);
 		} finally {
 			try {
-				if (null != response)
-					response.close();
+				if (null != response) response.close();
 			} catch (IOException e) {
 				throw new RuntimeException();
 			}
@@ -53,6 +56,7 @@ public class HttpUtil {
 					return null;
 				}
 			} catch (UnsupportedEncodingException e) {
+				logger.error(e);
 				return null;
 			}
 			entity.setContentEncoding("UTF-8");
@@ -64,10 +68,10 @@ public class HttpUtil {
 			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) return null;
 			return EntityUtils.toString(response.getEntity());
 		} catch (IOException e) {
+			logger.error(e);
 		} finally {
 			try {
-				if (null != response)
-					response.close();
+				if (null != response) response.close();
 			} catch (IOException e) {
 				throw new RuntimeException();
 			}
