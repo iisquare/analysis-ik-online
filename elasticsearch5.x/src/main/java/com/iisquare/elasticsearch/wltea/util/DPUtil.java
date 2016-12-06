@@ -285,8 +285,7 @@ public class DPUtil {
 	 *            对子项进行trim操作
 	 * @return 分隔后的字符串数组
 	 */
-	public static String[] explode(String string, String splitRegex,
-			String trimStr, boolean filterEmpty) {
+	public static String[] explode(String string, String splitRegex, String trimStr, boolean filterEmpty) {
 		List<String> list = new ArrayList<String>(0);
 		if (empty(string)) {
 			return new String[] {};

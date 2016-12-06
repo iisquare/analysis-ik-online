@@ -1,7 +1,9 @@
 package com.iisquare.elasticsearch.wltea.util;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.logging.ESLoggerFactory;
@@ -19,12 +21,17 @@ public class MongoUtil {
 	final static Logger logger = ESLoggerFactory.getLogger(MongoUtil.class);
 	private static MongoClient mongoClient = null;
 
-	public static synchronized MongoClient connect(String host, int port,
-			String userName, String database, String password) {
+	public static synchronized MongoClient connect(
+			String host, int port, String userName, String database, String password) {
 		if (null != mongoClient) return mongoClient;
 		MongoCredential credential = MongoCredential.createCredential(userName, database, password.toCharArray());
+		String[] hosts = DPUtil.explode(host, ",", " ", true);
+		List<ServerAddress> list = new ArrayList<>();
 		try {
-			mongoClient = new MongoClient(new ServerAddress(host, port), Arrays.asList(credential));
+			for (String item : hosts) {
+				list.add(new ServerAddress(item, port));
+			}
+			mongoClient = new MongoClient(list, Arrays.asList(credential));
 		} catch (UnknownHostException e) {
 			logger.error(e.getMessage(), e);
 			return null;
