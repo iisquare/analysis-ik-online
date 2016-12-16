@@ -22,7 +22,7 @@ repositories {
 }
 
 // 依赖
-def elasticsearchVersion = '5.0.1'
+def elasticsearchVersion = '5.1.1'
 dependencies {
 	testCompile (
 	)
@@ -30,7 +30,7 @@ dependencies {
 		// elasticsearch
 		[group: 'org.elasticsearch.client', name: 'transport', version: elasticsearchVersion],
 		// log4j
-		[group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'],
+		[group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'],
 		// mongo
 		[group: 'org.mongodb', name: 'mongo-java-driver', version: '2.13.2'],
 	)
