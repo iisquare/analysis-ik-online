@@ -24,8 +24,6 @@ repositories {
 // 依赖
 def elasticsearchVersion = '5.1.1'
 dependencies {
-	testCompile (
-	)
 	compile (
 		// elasticsearch
 		[group: 'org.elasticsearch.client', name: 'transport', version: elasticsearchVersion],
@@ -33,6 +31,8 @@ dependencies {
 		[group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'],
 		// mongo
 		[group: 'org.mongodb', name: 'mongo-java-driver', version: '2.13.2'],
+		// httpclient
+		[group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2']
 	)
 }
 
