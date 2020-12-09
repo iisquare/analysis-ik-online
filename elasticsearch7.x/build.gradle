@@ -1,0 +1,106 @@
+// 插件
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+// 项目配置
+version = '0.0.1'
+archivesBaseName = 'analysis-ik-online'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+// 插件配置
+def pluginClassName = 'com.iisquare.elasticsearch.plugin.IKAnalysisPlugin'
+def description = 'Chinese analysis with dictionary online manage.'
+
+// 仓库
+repositories {
+    maven { url 'https://maven.aliyun.com/repository/central' }
+    mavenCentral()
+    jcenter()
+}
+
+// 依赖
+def elasticsearchVersion = '7.9.3'
+dependencies {
+    compile group: 'org.elasticsearch.client', name: 'transport', version: elasticsearchVersion
+    compile group: 'org.codelibs.elasticsearch.lib', name: 'plugin-classloader', version: elasticsearchVersion
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
+}
+
+//configurations {
+//    runtime.exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
+//}
+
+// 部署测试文件
+task deployTest() {
+    for (node in ['single', 'node1', 'node2', 'node3']) {
+        delete "server/${node}/plugins/"
+        copy {
+            from 'src/test/resources'
+            into "server/${node}/plugins/${archivesBaseName}"
+            include '*.properties'
+        }
+    }
+}
+
+// 清除上次的编译过的文件
+task clearProject(type: Delete) {
+    delete 'build', 'target'
+}
+
+// 依赖编译，然后打包JAR
+task taskJar(type: Jar, dependsOn: compileJava) {
+    from 'build/classes/java/main'
+    destinationDir = file('build/libs')
+}
+
+// 拷贝配置文件
+task generateConfigFiles(type: Copy, dependsOn: [taskJar]) {
+    from('config') {
+        include '*.xml', '*.properties', 'plugin-security.policy'
+    }
+    into 'build/libs'
+    doLast {
+        def data = [
+                'targetCompatibility' : "${targetCompatibility}",
+                'elasticsearchVersion': "${elasticsearchVersion}",
+                'archivesBaseName'    : "${archivesBaseName}",
+                'version'             : "${version}",
+                'pluginClassName'     : "${pluginClassName}",
+                'description'         : "${description}"
+        ]
+        def inputFile = new File('config/plugin-descriptor.properties')
+        def outputFile = new File('build/libs/plugin-descriptor.properties')
+        def printWriter = outputFile.newPrintWriter()
+        inputFile.eachLine { line ->
+            line = line.replaceAll(/\$\{(\w+)\}/, { data[it[1]] })
+            println line
+            printWriter.println(line)
+        }
+        printWriter.flush()
+        printWriter.close()
+    }
+}
+//generateConfigFiles.mustRunAfter [clearProject]
+
+// 生成插件压缩文件
+task zipPlugin(type: Zip, dependsOn: [generateConfigFiles]) {
+    into('elasticsearch') {
+        from configurations.runtime
+        from('build/libs') {
+            include '*.jar', '*.xml', '*.properties', '*.policy'
+        }
+    }
+}
+
+// 复制插件压缩包到目标目录
+task release(type: Copy, dependsOn: [clearProject, zipPlugin]) {
+    from('build/distributions') {
+        include '*.zip'
+    }
+    into('target')
+}
