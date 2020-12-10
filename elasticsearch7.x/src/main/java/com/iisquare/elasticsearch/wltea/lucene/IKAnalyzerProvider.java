@@ -20,6 +20,9 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
                 useSynonym.equals("true"), useSmart.equals("true"), useArabic.equals("true"), useEnglish.equals("true"));
     }
 
+    /**
+     * 用于联想匹配的索引
+     */
     public static IKAnalyzerProvider enhanceIndexerForIndex(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
         provider.analyzer.setDictSerial("suggest");
@@ -30,6 +33,9 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
         return provider;
     }
 
+    /**
+     * 用于联想匹配的检索
+     */
     public static IKAnalyzerProvider enhanceIndexerForQuery(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
         provider.analyzer.setDictSerial("suggest");
@@ -40,21 +46,27 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
         return provider;
     }
 
+    /**
+     * 用于智能分词的索引和search_quote_analyzer的检索
+     */
     public static IKAnalyzerProvider enhanceQuerierForIndex(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
         provider.analyzer.setUseSmart(false);
         provider.analyzer.setUseArabic(true);
         provider.analyzer.setUseEnglish(true);
-        provider.analyzer.setUseSynonym(true);
+        provider.analyzer.setUseSynonym(false);
         return provider;
     }
 
+    /**
+     * 用于智能分词的检索，对检索关键词进行同义词处理比存储同义词索引的适用性要好
+     */
     public static IKAnalyzerProvider enhanceQuerierForQuery(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
         provider.analyzer.setUseSmart(true);
         provider.analyzer.setUseArabic(true);
         provider.analyzer.setUseEnglish(true);
-        provider.analyzer.setUseSynonym(false);
+        provider.analyzer.setUseSynonym(true);
         return provider;
     }
 
