@@ -6,6 +6,7 @@ import com.iisquare.elasticsearch.handler.ReloadHandler;
 import com.iisquare.elasticsearch.handler.StateHandler;
 import com.iisquare.elasticsearch.wltea.lucene.IKAnalyzerProvider;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
+import com.iisquare.elasticsearch.wltea.util.FileUtil;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
@@ -36,23 +37,24 @@ public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPl
     private static final String pluginDescriptorFileName = "plugin-descriptor.properties";
     public static String pluginName = null; // 插件名称
     public static String pluginPath = null; // 插件运行路径
-    public static String pluginLoadPath = null; // 配置加载路径
     final Logger logger = Loggers.getLogger(getClass(), getClass().getSimpleName());
 
     public IKAnalysisPlugin() throws IOException {
         logger.debug("#trace@IKAnalysisPlugin.construct");
-        pluginPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        pluginPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath(); // JAR路径
         File file = new File(pluginPath);
-        if (file.isFile()) pluginPath = file.getParent();
+        if (file.isFile()) pluginPath = file.getParent(); // 获取JAR运行目录
         String pathEndChar = DPUtil.subString(pluginPath, -1);
         if (!"/".equals(pathEndChar) && !"\\".equals(pathEndChar)) pluginPath += "/";
-        InputStream input = getClass().getClassLoader().getResourceAsStream(pluginDescriptorFileName);
-        if (null == input) { // 当前运行路径不存在，从插件运行路径获取
-            pluginLoadPath = pluginPath;
-            input = new FileInputStream(pluginPath + pluginDescriptorFileName);
-        }
         logger.info("pluginPath is " + pluginPath);
-        logger.info("pluginLoadPath is " + pluginLoadPath);
+        InputStream input;
+        if (FileUtil.isExists(pluginPath + pluginDescriptorFileName)) {
+            // 通过本地文件加载，生产环境部署
+            input = new FileInputStream(pluginPath + pluginDescriptorFileName);
+        } else {
+            // 通过JAR资源加载，本地开发调试
+            input = getClass().getClassLoader().getResourceAsStream(pluginDescriptorFileName);
+        }
         Properties props = new Properties();
         props.load(input);
         pluginName = props.getProperty("name");

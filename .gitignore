@@ -8,6 +8,7 @@
 /solr6.x/bin
 /*/build
 /*/target
+/*/out
 /elasticsearch5.x/server/example/*/plugins
 /elasticsearch5.x/server/example/*/bin
 /elasticsearch5.x/server/example/*/data
@@ -23,3 +24,4 @@
 /*/gradlew
 /*/gradlew.bat
 *.keystore
+*.class

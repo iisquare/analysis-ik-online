@@ -25,11 +25,11 @@ package com.iisquare.elasticsearch.wltea.cfg;
 
 import com.iisquare.elasticsearch.plugin.IKAnalysisPlugin;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
+import com.iisquare.elasticsearch.wltea.util.FileUtil;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.logging.Loggers;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -55,20 +55,19 @@ public class Configuration {
         props = new Properties();
         InputStream input = null;
         try {
-            if (null == IKAnalysisPlugin.pluginLoadPath) {
-                input = getClass().getClassLoader().getResourceAsStream(FILE_NAME);
+            if (FileUtil.isExists(IKAnalysisPlugin.pluginPath + FILE_NAME)) {
+                // 通过本地文件加载
+                input = new FileInputStream(IKAnalysisPlugin.pluginPath + FILE_NAME);
             } else {
-                input = new FileInputStream(IKAnalysisPlugin.pluginLoadPath + FILE_NAME);
+                // 通过JAR资源加载
+                input = getClass().getClassLoader().getResourceAsStream(FILE_NAME);
             }
             props.loadFromXML(input);
             parseConfig();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
-            try {
-                if (null != input) input.close();
-            } catch (IOException e) {
-            }
+            FileUtil.close(input);
         }
     }
 
@@ -85,7 +84,7 @@ public class Configuration {
     }
 
     private void parseConfig() {
-        url = props.getProperty("url", IKAnalysisPlugin.pluginLoadPath).trim();
+        url = props.getProperty("url", IKAnalysisPlugin.pluginPath).trim();
         word = props.getProperty("word", "word").trim();
         stopword = props.getProperty("stopword", "stopword").trim();
         quantifier = props.getProperty("quantifier", "quantifier").trim();

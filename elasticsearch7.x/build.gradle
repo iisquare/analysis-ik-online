@@ -31,35 +31,14 @@ dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
 }
 
-//configurations {
-//    runtime.exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
-//}
-
-// 部署测试文件
-task deployTest() {
-    for (node in ['single', 'node1', 'node2', 'node3']) {
-        delete "server/${node}/plugins/"
-        copy {
-            from 'src/test/resources'
-            into "server/${node}/plugins/${archivesBaseName}"
-            include '*.properties'
-        }
-    }
-}
-
-// 清除上次的编译过的文件
-task clearProject(type: Delete) {
-    delete 'build', 'target'
-}
-
-// 依赖编译，然后打包JAR
-task taskJar(type: Jar, dependsOn: compileJava) {
-    from 'build/classes/java/main'
-    destinationDir = file('build/libs')
+configurations {
+    runtime.exclude group: 'org.elasticsearch.client', module: 'transport'
+    runtime.exclude group: 'org.codelibs.elasticsearch.lib', module: 'plugin-classloader'
+    runtime.exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
 }
 
 // 拷贝配置文件
-task generateConfigFiles(type: Copy, dependsOn: [taskJar]) {
+task generateConfigFiles(type: Copy, dependsOn: [jar]) {
     from('config') {
         include '*.xml', '*.properties', 'plugin-security.policy'
     }
@@ -85,20 +64,32 @@ task generateConfigFiles(type: Copy, dependsOn: [taskJar]) {
         printWriter.close()
     }
 }
-//generateConfigFiles.mustRunAfter [clearProject]
+//generateConfigFiles.mustRunAfter [clean]
 
-// 生成插件压缩文件
-task zipPlugin(type: Zip, dependsOn: [generateConfigFiles]) {
-    into('elasticsearch') {
-        from configurations.runtime
-        from('build/libs') {
-            include '*.jar', '*.xml', '*.properties', '*.policy'
+// 部署测试文件
+task deployTest(dependsOn: [generateConfigFiles]) {
+    for (node in ['single', 'node1', 'node2', 'node3']) {
+        delete "server/${node}/plugins/"
+        copy {
+            from 'build/libs'
+            into "server/${node}/plugins/${archivesBaseName}"
+            include '*.properties'
         }
     }
 }
 
+// 生成插件压缩文件
+task zipPlugin(type: Zip, dependsOn: [generateConfigFiles]) {
+//    into('elasticsearch') {
+    from configurations.runtime
+    from('build/libs') {
+        include '*.jar', '*.xml', '*.properties', '*.policy'
+    }
+//    }
+}
+
 // 复制插件压缩包到目标目录
-task release(type: Copy, dependsOn: [clearProject, zipPlugin]) {
+task release(type: Copy, dependsOn: [clean, zipPlugin]) {
     from('build/distributions') {
         include '*.zip'
     }
