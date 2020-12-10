@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
+import org.elasticsearch.common.component.LifecycleComponent;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.ClusterSettings;
 import org.elasticsearch.common.settings.IndexScopedSettings;
@@ -83,4 +84,9 @@ public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPl
         );
     }
 
+    @Override
+    public Collection<Class<? extends LifecycleComponent>> getGuiceServiceClasses() {
+        logger.debug("#trace@IKAnalysisPlugin.getGuiceServiceClasses");
+        return Arrays.asList(IKAnalysisLifecycle.class);
+    }
 }

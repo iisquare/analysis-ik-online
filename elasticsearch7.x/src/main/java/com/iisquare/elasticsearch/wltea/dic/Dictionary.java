@@ -69,7 +69,6 @@ public class Dictionary {
      */
     public static void initial() {
         String[] dictSerials = Configuration.getInstance().getInitSerials();
-        getSingleton(null);
         for (int i = 0; i < dictSerials.length; i++) {
             getSingleton(dictSerials[i]);
         }
@@ -259,7 +258,7 @@ public class Dictionary {
         String content = content(dictSerial, dictType);
         if (null == content) return null;
         DictSegment dictSegment = new DictSegment((char) 0);
-        for (String line : DPUtil.explode(content, "\n", " ", true)) {
+        for (String line : DPUtil.explode(content, "[\r\n]+", " ", true)) {
             dictSegment.fillSegment(line.toLowerCase().toCharArray());
         }
         return dictSegment;
