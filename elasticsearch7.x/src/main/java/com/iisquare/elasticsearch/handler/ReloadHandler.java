@@ -8,7 +8,6 @@ import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequest;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.client.node.NodeClient;
-import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestRequest;
 
@@ -54,9 +53,9 @@ public class ReloadHandler extends HandlerBase {
         List<NodeInfo> nodeList = response.getNodes();
         List<String> list = new ArrayList<>();
         for (NodeInfo nodeInfo : nodeList) {
-            TransportAddress publishAddress = nodeInfo.remoteAddress();
-            if (null == publishAddress) continue;
-            list.add(publishAddress.getAddress() + ":" + publishAddress.getPort());
+            String hostAddress = nodeInfo.getNode().getHostAddress();
+            Integer port = nodeInfo.getSettings().getAsInt("http.port", 9200);
+            list.add(hostAddress + ":" + port);
         }
         if (list.isEmpty()) {
             message(channel, 1500, "未读取到任何存活节点", null);

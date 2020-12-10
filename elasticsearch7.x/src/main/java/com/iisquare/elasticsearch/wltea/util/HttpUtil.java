@@ -45,6 +45,7 @@ public class HttpUtil {
     public static String requestPost(String url, Object nvps) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
+        httpPost.setHeader("Content-Type", "application/json;charset=UTF-8");
         if (null != nvps) {
             StringEntity entity;
             try {

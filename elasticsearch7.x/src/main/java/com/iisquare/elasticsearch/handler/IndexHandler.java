@@ -58,16 +58,11 @@ public class IndexHandler extends HandlerBase {
                 list.add(map);
             }
             ts.end();
+            message(channel, 0, keyword, list);
         } catch (Exception e) {
-            list = null;
-            logger.error(e.getMessage(), e);
+            message(channel, 1500, e.getMessage(), keyword);
         } finally {
             FileUtil.close(ts, analyzer);
-        }
-        if (null == list) {
-            message(channel, 1500, "error", keyword);
-        } else {
-            message(channel, 0, keyword, list);
         }
     }
 }

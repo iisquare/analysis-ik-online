@@ -100,16 +100,11 @@ public class DemoHandler extends HandlerBase {
                 list.add(targetDoc.get(fieldName));
             }
             map.put("docs", list);
+            message(channel, 0, keyword, map);
         } catch (Exception e) {
-            map = null;
-            logger.error(e.getMessage(), e);
+            message(channel, 1500, e.getMessage(), keyword);
         } finally {
             FileUtil.close(ireader, directory, indexAnalyzer, queryAnalyzer);
-        }
-        if (null == map) {
-            message(channel, 1500, "error", keyword);
-        } else {
-            message(channel, 0, keyword, map);
         }
     }
 }
