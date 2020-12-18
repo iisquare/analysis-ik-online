@@ -56,7 +56,7 @@ public class ReloadHandler extends HandlerBase {
             return;
         }
         // 获取集群节点信息
-        final NodesInfoRequest nodesInfoRequest = new NodesInfoRequest(new String[]{"_all"});
+        final NodesInfoRequest nodesInfoRequest = new NodesInfoRequest();
         nodesInfoRequest.clear().addMetric(NodesInfoRequest.Metric.HTTP.metricName());
         NodesInfoResponse response;
         try {
