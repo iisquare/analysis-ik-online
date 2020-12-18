@@ -2,6 +2,7 @@ package com.iisquare.elasticsearch.handler;
 
 import com.iisquare.elasticsearch.plugin.HandlerBase;
 import com.iisquare.elasticsearch.wltea.dic.Dictionary;
+import com.iisquare.elasticsearch.wltea.util.ApiUtil;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 import com.iisquare.elasticsearch.wltea.util.HttpUtil;
 import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
@@ -13,6 +14,9 @@ import org.elasticsearch.rest.RestRequest;
 
 import java.util.*;
 
+/**
+ * 受限于线程池大小，若Handler中存在等待调用，可能会导致请求死锁
+ */
 public class ReloadHandler extends HandlerBase {
 
     @Override
@@ -46,28 +50,39 @@ public class ReloadHandler extends HandlerBase {
             return;
         }
         // 获取集群节点信息
-        String[] nodeIds = new String[]{"_all"};
-        final NodesInfoRequest nodesInfoRequest = new NodesInfoRequest(nodeIds);
+        final NodesInfoRequest nodesInfoRequest = new NodesInfoRequest(new String[]{"_all"});
         NodesInfoResponse response = client.admin().cluster().nodesInfo(nodesInfoRequest).get();
+        if (response.hasFailures()) {
+            message(channel, 1500, "获取存活节点信息失败", null);
+            return;
+        }
         // 解析集群节点信息
         List<NodeInfo> nodeList = response.getNodes();
-        List<String> list = new ArrayList<>();
+        Map<String, String> nodeMap = new LinkedHashMap<>();
         for (NodeInfo nodeInfo : nodeList) {
             String hostAddress = nodeInfo.getNode().getHostAddress();
             Integer port = nodeInfo.getSettings().getAsInt("http.port", 9200);
-            list.add(hostAddress + ":" + port);
-        }
-        if (list.isEmpty()) {
-            message(channel, 1500, "未读取到任何存活节点", null);
-            return;
+            nodeMap.put(nodeInfo.getNode().getId(), hostAddress + ":" + port);
         }
         // 执行集群调度，重载全部节点词典
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         boolean status = true;
-        for (String nodeName : list) {
-            String url = "http://" + nodeName + uri("reload");
-            param.put("forceNode", true);
-            Object result = DPUtil.parseJSON(HttpUtil.requestPost(url, DPUtil.buildJSON(param)));
+        for (Map.Entry<String, String> entry : nodeMap.entrySet()) {
+            String nodeId = entry.getKey();
+            String nodeName = entry.getValue();
+            Object result;
+            if (client.getLocalNodeId().equals(nodeId)) { // 当前节点直接执行本地调用，避免远程调用死锁
+                LinkedHashMap<String, Boolean> current = Dictionary.getSingleton(dictSerial).reload(dicts);
+                if (current.get("status")) {
+                    result = ApiUtil.result(0, "载入成功", current);
+                } else {
+                    result = ApiUtil.result(1500, "载入失败", current);
+                }
+            } else {
+                String url = "http://" + nodeName + uri("reload");
+                param.put("forceNode", true);
+                result = DPUtil.parseJSON(HttpUtil.requestPost(url, DPUtil.buildJSON(param)));
+            }
             if (null == result) {
                 status = false;
             } else {

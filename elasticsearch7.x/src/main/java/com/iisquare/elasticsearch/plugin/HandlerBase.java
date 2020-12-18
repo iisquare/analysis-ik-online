@@ -35,7 +35,7 @@ public abstract class HandlerBase implements RestHandler {
     }
 
     public void message(RestChannel channel, int code, String message, Object data) {
-        text(channel, ApiUtil.echoMessage(code, message, data));
+        text(channel, ApiUtil.echoResult(code, message, data));
     }
 
     public Map<String, Object> param(RestRequest request) {

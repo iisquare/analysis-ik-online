@@ -31,7 +31,7 @@ public class IndexHandler extends HandlerBase {
         Map<String, Object> param = param(request);
         String keyword = DPUtil.parseString(param.get("keyword"));
         if (DPUtil.empty(keyword)) {
-            text(channel, ApiUtil.echoMessage(0, "ok", DPUtil.getCurrentSeconds()));
+            text(channel, ApiUtil.echoResult(0, "ok", DPUtil.getCurrentSeconds()));
             return;
         }
         String dictSerial = DPUtil.parseString(param.get("dictSerial"));
