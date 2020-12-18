@@ -13,6 +13,7 @@ import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestRequest;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 受限于线程池大小，若Handler中存在等待调用，可能会导致请求死锁
@@ -51,9 +52,16 @@ public class ReloadHandler extends HandlerBase {
         }
         // 获取集群节点信息
         final NodesInfoRequest nodesInfoRequest = new NodesInfoRequest(new String[]{"_all"});
-        NodesInfoResponse response = client.admin().cluster().nodesInfo(nodesInfoRequest).get();
-        if (response.hasFailures()) {
-            message(channel, 1500, "获取存活节点信息失败", null);
+        NodesInfoResponse response;
+        try {
+            response = client.admin().cluster()
+                    .nodesInfo(nodesInfoRequest).get(3000, TimeUnit.MILLISECONDS);
+            if (response.hasFailures()) {
+                message(channel, 1500, "获取存活节点信息失败", null);
+                return;
+            }
+        } catch (Exception e) {
+            message(channel, 1550, "获取存活节点信息异常", e.getMessage());
             return;
         }
         // 解析集群节点信息

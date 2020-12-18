@@ -23,7 +23,10 @@ public class HttpUtil {
     final static Logger logger = Loggers.getLogger(HttpUtil.class, HttpUtil.class.getSimpleName());
 
     public static RequestConfig requestConfig() {
-        RequestConfig.Builder builder = RequestConfig.custom().setConnectTimeout(3000).setSocketTimeout(60000);
+        RequestConfig.Builder builder = RequestConfig.custom()
+                .setConnectionRequestTimeout(3000)
+                .setConnectTimeout(3000)
+                .setSocketTimeout(60000);
         return builder.build();
     }
 
