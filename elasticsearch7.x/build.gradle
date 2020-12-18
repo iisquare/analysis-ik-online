@@ -27,7 +27,7 @@ def elasticsearchVersion = '7.9.3'
 dependencies {
     compile group: 'org.elasticsearch.client', name: 'transport', version: elasticsearchVersion
     compile group: 'org.codelibs.elasticsearch.lib', name: 'plugin-classloader', version: elasticsearchVersion
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.10'
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
 }
 
