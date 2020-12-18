@@ -1,9 +1,6 @@
 package com.iisquare.elasticsearch.plugin;
 
-import com.iisquare.elasticsearch.handler.DemoHandler;
-import com.iisquare.elasticsearch.handler.IndexHandler;
-import com.iisquare.elasticsearch.handler.ReloadHandler;
-import com.iisquare.elasticsearch.handler.StateHandler;
+import com.iisquare.elasticsearch.handler.*;
 import com.iisquare.elasticsearch.wltea.lucene.IKAnalyzerProvider;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 import com.iisquare.elasticsearch.wltea.util.FileUtil;
@@ -82,7 +79,8 @@ public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPl
                 new DemoHandler(),
                 new IndexHandler(),
                 new ReloadHandler(),
-                new StateHandler()
+                new StateHandler(),
+                new NodesHandler()
         );
     }
 

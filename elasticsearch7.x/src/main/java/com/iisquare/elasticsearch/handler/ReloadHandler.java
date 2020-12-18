@@ -10,15 +10,16 @@ import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequest;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.client.node.NodeClient;
 import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.http.HttpInfo;
 import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestRequest;
+import org.elasticsearch.rest.action.RestActionListener;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 受限于线程池大小，若Handler中存在等待调用，可能会导致请求死锁
@@ -58,55 +59,49 @@ public class ReloadHandler extends HandlerBase {
         // 获取集群节点信息
         final NodesInfoRequest nodesInfoRequest = new NodesInfoRequest();
         nodesInfoRequest.clear().addMetric(NodesInfoRequest.Metric.HTTP.metricName());
-        NodesInfoResponse response;
-        try {
-            response = client.admin().cluster()
-                    .nodesInfo(nodesInfoRequest).get(3000, TimeUnit.MILLISECONDS);
-            if (response.hasFailures()) {
-                message(channel, 1500, "获取存活节点信息失败", null);
-                return;
-            }
-        } catch (Exception e) {
-            message(channel, 1550, "获取存活节点信息异常", e.getMessage());
-            return;
-        }
-        // 解析集群节点信息
-        List<NodeInfo> nodeList = response.getNodes();
-        Map<String, String> nodeMap = new LinkedHashMap<>();
-        for (NodeInfo nodeInfo : nodeList) {
-            TransportAddress address = nodeInfo.getInfo(HttpInfo.class).getAddress().publishAddress();
-            nodeMap.put(nodeInfo.getNode().getId(), address.getAddress() + ":" + address.getPort());
-        }
-        // 执行集群调度，重载全部节点词典
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        boolean status = true;
-        for (Map.Entry<String, String> entry : nodeMap.entrySet()) {
-            String nodeId = entry.getKey();
-            String nodeName = entry.getValue();
-            Object result;
-            if (client.getLocalNodeId().equals(nodeId)) { // 当前节点直接执行本地调用，避免远程调用死锁
-                LinkedHashMap<String, Boolean> current = Dictionary.getSingleton(dictSerial).reload(dicts);
-                if (current.get("status")) {
-                    result = ApiUtil.result(0, "载入成功", current);
-                } else {
-                    result = ApiUtil.result(1500, "载入失败", current);
+        nodesInfoRequest.timeout(TimeValue.timeValueMillis(3000));
+        client.admin().cluster().nodesInfo(nodesInfoRequest, new RestActionListener<NodesInfoResponse>(channel) {
+            @Override
+            public void processResponse(final NodesInfoResponse nodesInfoResponse) {
+                // 解析集群节点信息
+                List<NodeInfo> nodeList = nodesInfoResponse.getNodes();
+                Map<String, String> nodeMap = new LinkedHashMap<>();
+                for (NodeInfo nodeInfo : nodeList) {
+                    TransportAddress address = nodeInfo.getInfo(HttpInfo.class).getAddress().publishAddress();
+                    nodeMap.put(nodeInfo.getNode().getId(), address.getAddress() + ":" + address.getPort());
                 }
-            } else {
-                String url = "http://" + nodeName + uri("reload");
-                param.put("forceNode", true);
-                result = DPUtil.parseJSON(HttpUtil.requestPost(url, DPUtil.buildJSON(param)));
+                // 执行集群调度，重载全部节点词典
+                LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+                boolean status = true;
+                for (Map.Entry<String, String> entry : nodeMap.entrySet()) {
+                    String nodeId = entry.getKey();
+                    String nodeName = entry.getValue();
+                    Object result;
+                    if (client.getLocalNodeId().equals(nodeId)) { // 当前节点直接执行本地调用，避免远程调用死锁
+                        LinkedHashMap<String, Boolean> current = Dictionary.getSingleton(dictSerial).reload(dicts);
+                        if (current.get("status")) {
+                            result = ApiUtil.result(0, "载入成功", current);
+                        } else {
+                            result = ApiUtil.result(1500, "载入失败", current);
+                        }
+                    } else {
+                        String url = "http://" + nodeName + uri("reload");
+                        param.put("forceNode", true);
+                        result = DPUtil.parseJSON(HttpUtil.requestPost(url, DPUtil.buildJSON(param)));
+                    }
+                    if (null == result) {
+                        status = false;
+                    } else {
+                        status &= 0 == DPUtil.parseInt(((Map<?, ?>) result).get("code"));
+                    }
+                    map.put(nodeName, result);
+                }
+                if (status) {
+                    message(channel, 0, "集群执行载入成功", map);
+                } else {
+                    message(channel, 1500, "集群执行载入失败", map);
+                }
             }
-            if (null == result) {
-                status = false;
-            } else {
-                status &= 0 == DPUtil.parseInt(((Map<?, ?>) result).get("code"));
-            }
-            map.put(nodeName, result);
-        }
-        if (status) {
-            message(channel, 0, "集群执行载入成功", map);
-        } else {
-            message(channel, 1500, "集群执行载入失败", map);
-        }
+        });
     }
 }
