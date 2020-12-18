@@ -9,10 +9,15 @@ import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequest;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.client.node.NodeClient;
+import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.http.HttpInfo;
 import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestRequest;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -52,6 +57,7 @@ public class ReloadHandler extends HandlerBase {
         }
         // 获取集群节点信息
         final NodesInfoRequest nodesInfoRequest = new NodesInfoRequest(new String[]{"_all"});
+        nodesInfoRequest.clear().addMetric(NodesInfoRequest.Metric.HTTP.metricName());
         NodesInfoResponse response;
         try {
             response = client.admin().cluster()
@@ -68,9 +74,8 @@ public class ReloadHandler extends HandlerBase {
         List<NodeInfo> nodeList = response.getNodes();
         Map<String, String> nodeMap = new LinkedHashMap<>();
         for (NodeInfo nodeInfo : nodeList) {
-            String hostAddress = nodeInfo.getNode().getHostAddress();
-            Integer port = nodeInfo.getSettings().getAsInt("http.port", 9200);
-            nodeMap.put(nodeInfo.getNode().getId(), hostAddress + ":" + port);
+            TransportAddress address = nodeInfo.getInfo(HttpInfo.class).getAddress().publishAddress();
+            nodeMap.put(nodeInfo.getNode().getId(), address.getAddress() + ":" + address.getPort());
         }
         // 执行集群调度，重载全部节点词典
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
