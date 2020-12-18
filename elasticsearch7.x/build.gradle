@@ -79,19 +79,11 @@ task deployTest(dependsOn: [generateConfigFiles]) {
 }
 
 // 生成插件压缩文件
-task zipPlugin(type: Zip, dependsOn: [generateConfigFiles]) {
-//    into('elasticsearch') {
+task release(type: Zip, dependsOn: [clean, generateConfigFiles]) {
+    //    into('elasticsearch') {
     from configurations.runtime
     from('build/libs') {
         include '*.jar', '*.xml', '*.properties', '*.policy'
     }
 //    }
-}
-
-// 复制插件压缩包到目标目录
-task release(type: Copy, dependsOn: [clean, zipPlugin]) {
-    from('build/distributions') {
-        include '*.zip'
-    }
-    into('target')
 }
