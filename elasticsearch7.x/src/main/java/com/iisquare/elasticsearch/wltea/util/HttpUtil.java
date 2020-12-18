@@ -2,6 +2,7 @@ package com.iisquare.elasticsearch.wltea.util;
 
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -21,9 +22,15 @@ public class HttpUtil {
 
     final static Logger logger = Loggers.getLogger(HttpUtil.class, HttpUtil.class.getSimpleName());
 
+    public static RequestConfig requestConfig() {
+        RequestConfig.Builder builder = RequestConfig.custom().setConnectTimeout(3000).setSocketTimeout(60000);
+        return builder.build();
+    }
+
     public static String requestGet(String url) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
+        httpGet.setConfig(requestConfig());
         CloseableHttpResponse response = null;
         try {
             response = httpclient.execute(httpGet);
@@ -45,6 +52,7 @@ public class HttpUtil {
     public static String requestPost(String url, Object nvps) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
+        httpPost.setConfig(requestConfig());
         httpPost.setHeader("Content-Type", "application/json;charset=UTF-8");
         if (null != nvps) {
             StringEntity entity;
