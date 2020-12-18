@@ -28,29 +28,24 @@ public class HttpUtil {
     }
 
     public static String requestGet(String url) {
-        CloseableHttpClient httpclient = HttpClients.createDefault();
+        CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
         httpGet.setConfig(requestConfig());
         CloseableHttpResponse response = null;
         try {
-            response = httpclient.execute(httpGet);
+            response = httpClient.execute(httpGet);
             if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) return null;
             return EntityUtils.toString(response.getEntity());
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
+            return null;
         } finally {
-            try {
-                if (null != response) response.close();
-            } catch (IOException e) {
-                throw new RuntimeException();
-            }
+            FileUtil.close(response, httpClient);
         }
-        return null;
     }
 
-    @SuppressWarnings("unchecked")
     public static String requestPost(String url, Object nvps) {
-        CloseableHttpClient httpclient = HttpClients.createDefault();
+        CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
         httpPost.setConfig(requestConfig());
         httpPost.setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -73,18 +68,14 @@ public class HttpUtil {
         }
         CloseableHttpResponse response = null;
         try {
-            response = httpclient.execute(httpPost);
+            response = httpClient.execute(httpPost);
             if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) return null;
             return EntityUtils.toString(response.getEntity());
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
+            return null;
         } finally {
-            try {
-                if (null != response) response.close();
-            } catch (IOException e) {
-                throw new RuntimeException();
-            }
+            FileUtil.close(response, httpClient);
         }
-        return null;
     }
 }

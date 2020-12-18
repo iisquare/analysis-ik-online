@@ -38,14 +38,15 @@ import org.apache.lucene.analysis.synonym.SynonymMap;
 import org.elasticsearch.common.logging.Loggers;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 词典管理类,单子模式
  */
 public class Dictionary {
-    private static HashMap<String, Dictionary> singletonMap = new HashMap<String, Dictionary>(); // 词典单子实例
+    private static Map<String, Dictionary> singletonMap = new ConcurrentHashMap<>(); // 词典单子实例
     final Logger logger = Loggers.getLogger(getClass(), getClass().getSimpleName());
     private DictSegment _MainDict;// 主词典对象
     private DictSegment _StopWordDict; // 停止词词典
@@ -99,7 +100,7 @@ public class Dictionary {
         return collectionName + "." + dictSerial;
     }
 
-    public synchronized LinkedHashMap<String, Boolean> reload(String[] dicts) {
+    public LinkedHashMap<String, Boolean> reload(String[] dicts) {
         LinkedHashMap<String, Boolean> map = new LinkedHashMap<>();
         boolean status = true;
         try {
