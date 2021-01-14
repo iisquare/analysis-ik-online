@@ -3,5 +3,5 @@
 <properties>
     <comment>IK Analyzer 扩展配置</comment>
     <entry key="url">http://127.0.0.1:7810/dictionary/plain</entry>
-    <entry key="initSerials">suggest</entry>
+    <entry key="initSerials">main,suggest</entry>
 </properties>

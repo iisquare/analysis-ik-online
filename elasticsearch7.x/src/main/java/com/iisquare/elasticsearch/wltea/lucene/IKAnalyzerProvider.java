@@ -51,6 +51,7 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
      */
     public static IKAnalyzerProvider enhanceQuerierForIndex(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
+        provider.analyzer.setDictSerial("main");
         provider.analyzer.setUseSmart(false);
         provider.analyzer.setUseArabic(true);
         provider.analyzer.setUseEnglish(true);
@@ -63,6 +64,7 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
      */
     public static IKAnalyzerProvider enhanceQuerierForQuery(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
+        provider.analyzer.setDictSerial("main");
         provider.analyzer.setUseSmart(true);
         provider.analyzer.setUseArabic(true);
         provider.analyzer.setUseEnglish(true);
