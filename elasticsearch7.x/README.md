@@ -8,8 +8,11 @@
 	- cd /path/to/elasticsearch
 	- bin/elasticsearch-plugin install file:///path/to/analysis-ik-online-${version}.zip
 	- bin/elasticsearch-plugin list
-- 编辑/path/to/elasticsearch/plugins/analysis-ik-online/IKAnalyzer.cfg.xml文件，修改对应MongoDB配置
+- 编辑/path/to/elasticsearch/plugins/analysis-ik-online/IKAnalyzer.cfg.xml文件，修改对应词库配置
 - 启动/重启elasticsearch，访问http://127.0.0.1:9200/
+
+## 变更记录
+- 移除MongoDB读写，改为从远程接口或本地文件加载词库。
 
 ## 参数说明
 - dictSerial：词典编码，用于区分不同词典
@@ -43,21 +46,21 @@ POST _analyze
 
 ```
 {
-	"mappings": {
-		"default": {
-			"properties": {
-            	"position" : {
-                	"type" : "geo_point"
-                },
-				"keyword": {
-					"type": "text",
-					"analyzer": "text_ik_q_index",
-                    "search_analyzer": "text_ik_q_query",
-                    "search_quote_analyzer": "text_ik_q_index"
-				}
-			}
-		}
-	}
+  "mappings": {
+    "default": {
+      "properties": {
+        "position": {
+          "type": "geo_point"
+        }, 
+        "keyword": {
+          "type": "text", 
+          "analyzer": "text_ik_q_index", 
+          "search_analyzer": "text_ik_q_query", 
+          "search_quote_analyzer": "text_ik_q_index"
+        }
+      }
+    }
+  }
 }
 ```
 
