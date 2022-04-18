@@ -244,7 +244,7 @@ public class Dictionary {
 
     private String content(String dictSerial, String dictType) {
         String url = configuration.getUrl();
-        if (DPUtil.empty(url)) url = "./";
+        if (DPUtil.empty(url)) return "";
         if (url.startsWith("http")) {
             url += "?catalogue=" + dictSerial + "&type=" + dictType;
             return HttpUtil.requestGet(url);
