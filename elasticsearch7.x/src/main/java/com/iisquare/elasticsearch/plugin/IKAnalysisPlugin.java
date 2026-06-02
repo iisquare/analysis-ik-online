@@ -65,10 +65,10 @@ public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPl
     public Map<String, AnalysisProvider<AnalyzerProvider<? extends Analyzer>>> getAnalyzers() {
         logger.debug("#trace@IKAnalysisPlugin.getAnalyzers");
         Map<String, AnalysisProvider<AnalyzerProvider<? extends Analyzer>>> map = new HashMap<>();
-        map.put("text_ik_i_index", IKAnalyzerProvider::enhanceIndexerForIndex);
-        map.put("text_ik_i_query", IKAnalyzerProvider::enhanceIndexerForQuery);
-        map.put("text_ik_q_index", IKAnalyzerProvider::enhanceQuerierForIndex);
-        map.put("text_ik_q_query", IKAnalyzerProvider::enhanceQuerierForQuery);
+        map.put("ik_suggest_index", IKAnalyzerProvider::ikSuggestIndex);
+        map.put("ik_suggest_query", IKAnalyzerProvider::ikSuggestQuery);
+        map.put("ik_max_word", IKAnalyzerProvider::ikMaxWord);
+        map.put("ik_smart", IKAnalyzerProvider::ikSmart);
         return map;
     }
 

@@ -23,7 +23,7 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
     /**
      * 用于联想匹配的索引
      */
-    public static IKAnalyzerProvider enhanceIndexerForIndex(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+    public static IKAnalyzerProvider ikSuggestIndex(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
         provider.analyzer.setDictSerial("suggest");
         provider.analyzer.setUseSmart(false);
@@ -36,7 +36,7 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
     /**
      * 用于联想匹配的检索
      */
-    public static IKAnalyzerProvider enhanceIndexerForQuery(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+    public static IKAnalyzerProvider ikSuggestQuery(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
         provider.analyzer.setDictSerial("suggest");
         provider.analyzer.setUseSmart(true);
@@ -49,12 +49,12 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
     /**
      * 用于智能分词的索引和search_quote_analyzer的检索
      */
-    public static IKAnalyzerProvider enhanceQuerierForIndex(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+    public static IKAnalyzerProvider ikMaxWord(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
         provider.analyzer.setDictSerial("main");
         provider.analyzer.setUseSmart(false);
-        provider.analyzer.setUseArabic(true);
-        provider.analyzer.setUseEnglish(true);
+        provider.analyzer.setUseArabic(false);
+        provider.analyzer.setUseEnglish(false);
         provider.analyzer.setUseSynonym(false);
         return provider;
     }
@@ -62,12 +62,12 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
     /**
      * 用于智能分词的检索，对检索关键词进行同义词处理比存储同义词索引的适用性要好
      */
-    public static IKAnalyzerProvider enhanceQuerierForQuery(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+    public static IKAnalyzerProvider ikSmart(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
         provider.analyzer.setDictSerial("main");
         provider.analyzer.setUseSmart(true);
-        provider.analyzer.setUseArabic(true);
-        provider.analyzer.setUseEnglish(true);
+        provider.analyzer.setUseArabic(false);
+        provider.analyzer.setUseEnglish(false);
         provider.analyzer.setUseSynonym(true);
         return provider;
     }
