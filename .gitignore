@@ -25,3 +25,4 @@
 /*/gradlew.bat
 *.keystore
 *.class
+/elasticsearch7.x/.claude
