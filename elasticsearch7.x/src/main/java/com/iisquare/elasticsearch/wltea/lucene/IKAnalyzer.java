@@ -34,9 +34,9 @@ import org.apache.lucene.analysis.synonym.SynonymGraphFilter;
 public final class IKAnalyzer extends Analyzer {
 
     private String dictSerial; // 词典编号
-    private boolean useSmart; // 是否使用智能分词
-    private boolean useArabic; // 是否拆分阿拉伯数字
-    private boolean useEnglish; // 是否拆分字母
+    private boolean useSmart; // 是否使用智能分词（粗粒度分词，仅保留最长匹配的词语）
+    private boolean useArabic; // 是否合并阿拉伯数字
+    private boolean useEnglish; // 是否合并字母
     private boolean useSynonym; // 是否使用同义词过滤器
 
     /**

@@ -53,8 +53,8 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
         provider.analyzer.setDictSerial("main");
         provider.analyzer.setUseSmart(false);
-        provider.analyzer.setUseArabic(false);
-        provider.analyzer.setUseEnglish(false);
+        provider.analyzer.setUseArabic(true);
+        provider.analyzer.setUseEnglish(true);
         provider.analyzer.setUseSynonym(false);
         return provider;
     }
@@ -66,8 +66,8 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
         IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
         provider.analyzer.setDictSerial("main");
         provider.analyzer.setUseSmart(true);
-        provider.analyzer.setUseArabic(false);
-        provider.analyzer.setUseEnglish(false);
+        provider.analyzer.setUseArabic(true);
+        provider.analyzer.setUseEnglish(true);
         provider.analyzer.setUseSynonym(true);
         return provider;
     }
