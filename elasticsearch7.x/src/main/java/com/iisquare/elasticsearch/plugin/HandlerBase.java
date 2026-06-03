@@ -3,11 +3,11 @@ package com.iisquare.elasticsearch.plugin;
 import com.iisquare.elasticsearch.wltea.util.ApiUtil;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.common.collect.Tuple;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.xcontent.XContentHelper;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.core.Tuple;
 import org.elasticsearch.rest.*;
+import org.elasticsearch.xcontent.XContentType;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,7 +62,7 @@ public abstract class HandlerBase implements RestHandler {
     }
 
     protected Map<String, Object> map(Object value) {
-        if (null == value || !(value instanceof Map)) return new LinkedHashMap<>();
+        if (!(value instanceof Map)) return new LinkedHashMap<>();
         return (Map<String, Object>) value;
     }
 

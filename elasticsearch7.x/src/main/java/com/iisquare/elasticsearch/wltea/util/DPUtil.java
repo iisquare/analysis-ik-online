@@ -4,6 +4,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.xcontent.*;
+import org.elasticsearch.xcontent.*;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
