@@ -37,6 +37,8 @@ import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.apache.lucene.analysis.synonym.SynonymMap;
 import org.elasticsearch.common.logging.Loggers;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -247,7 +249,10 @@ public class Dictionary {
         if (DPUtil.empty(url)) return "";
         if (url.startsWith("http")) {
             url += "?catalogue=" + dictSerial + "&type=" + dictType;
-            return HttpUtil.requestGet(url);
+            String finalUrl = url;
+            return AccessController.doPrivileged((PrivilegedAction<String>) () -> {
+                return HttpUtil.requestGet(finalUrl);
+            });
         } else {
             if (!url.endsWith("/")) url += "/";
             url += dictSerial + "-" + dictType + ".dict";
