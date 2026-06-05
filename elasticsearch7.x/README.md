@@ -23,13 +23,14 @@
 
 ## 分词演示
 
-在IKAnalysisPlugin中，默认提供了四种分析器，分别是：
+在IKAnalysisPlugin中，默认提供了五种分析器，分别是：
 
 ```
-map.put("text_ik_i_index", IKAnalyzerProvider::enhanceIndexerForIndex);
-map.put("text_ik_i_query", IKAnalyzerProvider::enhanceIndexerForQuery);
-map.put("text_ik_q_index", IKAnalyzerProvider::enhanceQuerierForIndex);
-map.put("text_ik_q_query", IKAnalyzerProvider::enhanceQuerierForQuery);
+map.put("ik_suggest_index", IKAnalyzerProvider::ikSuggestIndex);
+map.put("ik_suggest_query", IKAnalyzerProvider::ikSuggestQuery);
+map.put("ik_max_word", IKAnalyzerProvider::ikMaxWord);
+map.put("ik_smart", IKAnalyzerProvider::ikSmart);
+map.put("ik_no_word", IKAnalyzerProvider::ikNoWord);
 ```
 
 ## 测试示例：
@@ -37,7 +38,7 @@ map.put("text_ik_q_query", IKAnalyzerProvider::enhanceQuerierForQuery);
 ```
 POST _analyze
 {
-  "analyzer": "text_ik_q_query",
+  "analyzer": "ik_smart",
   "text":     "请参照API接口文档管理词库"
 }
 ```
@@ -54,15 +55,24 @@ POST _analyze
         }, 
         "keyword": {
           "type": "text", 
-          "analyzer": "text_ik_q_index", 
-          "search_analyzer": "text_ik_q_query", 
-          "search_quote_analyzer": "text_ik_q_index"
+          "analyzer": "ik_max_word", 
+          "search_analyzer": "ik_smart", 
+          "search_quote_analyzer": "ik_max_word"
         }
       }
     }
   }
 }
 ```
+
+## 最佳实践
+
+- 推荐采用ik_no_word作为默认的索引和检索，全部拆散为单个字。
+- 完整匹配直接使用match_phrase短语查询。
+- 常规检索通过调用ik_smart获取分词结果后，转换为短语查询。
+- 维护专用于ik_smart分词检索接口的词库，避免用于索引（词库变更后需重建）。
+- fixed: ik_max_word会在中间位置插入细粒度分词，导致ik_smart粗粒度分词短语查询失败。
+- fixed: 使用match operator(and/or)查询standard索引，即不能处理特殊字符，也存在太多分词无关的内容。
 
 ## 常见问题
 - Mapping支持的字段类型
