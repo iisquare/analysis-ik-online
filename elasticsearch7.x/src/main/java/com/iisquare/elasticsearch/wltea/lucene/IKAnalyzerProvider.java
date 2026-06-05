@@ -72,6 +72,19 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
         return provider;
     }
 
+    /**
+     * 无词库索引，检索时通过ikSmart+同义词转短语查询进行匹配
+     */
+    public static IKAnalyzerProvider ikNoWord(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+        IKAnalyzerProvider provider = new IKAnalyzerProvider(indexSettings, env, name, settings);
+        provider.analyzer.setDictSerial("");
+        provider.analyzer.setUseSmart(false);
+        provider.analyzer.setUseArabic(true);
+        provider.analyzer.setUseEnglish(true);
+        provider.analyzer.setUseSynonym(false);
+        return provider;
+    }
+
     @Override
     public IKAnalyzer get() {
         return this.analyzer;

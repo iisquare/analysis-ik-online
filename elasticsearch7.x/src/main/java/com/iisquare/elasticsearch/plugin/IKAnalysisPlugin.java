@@ -69,6 +69,7 @@ public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPl
         map.put("ik_suggest_query", IKAnalyzerProvider::ikSuggestQuery);
         map.put("ik_max_word", IKAnalyzerProvider::ikMaxWord);
         map.put("ik_smart", IKAnalyzerProvider::ikSmart);
+        map.put("ik_no_word", IKAnalyzerProvider::ikNoWord);
         return map;
     }
 
