@@ -1,0 +1,80 @@
+// 插件
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+// 项目配置
+version = '0.0.1'
+archivesBaseName = 'analysis-ik-online'
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+// 插件配置
+def pluginClassName = 'com.iisquare.elasticsearch.plugin.IKAnalysisPlugin'
+def description = 'Chinese analysis with dictionary online manage.'
+
+// 仓库
+repositories {
+    maven { url 'https://maven.aliyun.com/repository/central' }
+    mavenCentral()
+    jcenter()
+}
+
+// 依赖
+def elasticsearchVersion = '8.19.16'
+dependencies {
+    implementation group: 'org.elasticsearch', name: 'elasticsearch', version: elasticsearchVersion
+    implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.6.1'
+}
+
+// 拷贝配置文件
+task generateConfigFiles(type: Copy, dependsOn: [jar]) {
+    from('config') {
+        include '*.xml', '*.properties', 'plugin-security.policy'
+    }
+    into 'build/libs'
+    doLast {
+        def data = [
+                'targetCompatibility' : "${targetCompatibility}",
+                'elasticsearchVersion': "${elasticsearchVersion}",
+                'archivesBaseName'    : "${archivesBaseName}",
+                'version'             : "${version}",
+                'pluginClassName'     : "${pluginClassName}",
+                'description'         : "${description}"
+        ]
+        def inputFile = new File('config/plugin-descriptor.properties')
+        def outputFile = new File('build/libs/plugin-descriptor.properties')
+        def printWriter = outputFile.newPrintWriter()
+        inputFile.eachLine { line ->
+            line = line.replaceAll(/\$\{(\w+)\}/, { data[it[1]] })
+            println line
+            printWriter.println(line)
+        }
+        printWriter.flush()
+        printWriter.close()
+    }
+}
+//generateConfigFiles.mustRunAfter [clean]
+
+// 部署测试文件
+task deployTest(dependsOn: [generateConfigFiles]) {
+    for (node in ['single', 'node1', 'node2', 'node3']) {
+        delete "server/${node}/plugins/"
+        copy {
+            from 'build/libs'
+            into "server/${node}/plugins/${archivesBaseName}"
+            include '*.properties'
+        }
+    }
+}
+
+// 生成插件压缩文件
+task release(type: Zip, dependsOn: [clean, generateConfigFiles]) {
+    //    into('elasticsearch') {
+    from configurations.runtimeClasspath
+    from('build/libs') {
+        include '*.jar', '*.xml', '*.properties', '*.policy'
+    }
+//    }
+}

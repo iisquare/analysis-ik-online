@@ -21,8 +21,15 @@
 /elasticsearch7.x/server/*/lib
 /elasticsearch7.x/server/*/logs
 /elasticsearch7.x/server/*/config/scripts
+/elasticsearch8.x/server/*/plugins
+/elasticsearch8.x/server/*/bin
+/elasticsearch8.x/server/*/data
+/elasticsearch8.x/server/*/lib
+/elasticsearch8.x/server/*/logs
+/elasticsearch8.x/server/*/config/scripts
 /*/gradlew
 /*/gradlew.bat
 *.keystore
 *.class
 /elasticsearch7.x/.claude
+/elasticsearch8.x/.claude
