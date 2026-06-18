@@ -268,11 +268,11 @@ public class DPUtil {
      * @return 分隔后的字符串数组
      */
     public static String[] explode(String string, String splitRegex, String trimStr, boolean filterEmpty) {
-        List<String> list = new ArrayList<String>(0);
+        List<String> list = new ArrayList<>(0);
         if (empty(string)) {
             return new String[]{};
         }
-        for (String str : string.split(splitRegex)) {
+        for (String str : string.split(splitRegex, -1)) {
             if (filterEmpty && empty(str))
                 continue;
             if (null != trimStr) {

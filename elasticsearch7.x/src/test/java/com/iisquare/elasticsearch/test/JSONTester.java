@@ -2,10 +2,7 @@ package com.iisquare.elasticsearch.test;
 
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JSONTester {
 
@@ -21,6 +18,7 @@ public class JSONTester {
      * null					->	null
      */
     public static void main(String[] args) {
+        System.out.println(Arrays.toString(DPUtil.explode("main,suggest,".trim(), ",", " ", false)));
         Map<String, Object> map = new HashMap<>();
         map.put("a", 1);
         map.put("b", "2");

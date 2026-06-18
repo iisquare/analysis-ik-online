@@ -89,7 +89,7 @@ public class Configuration {
         stopword = props.getProperty("stopword", "stopword").trim();
         quantifier = props.getProperty("quantifier", "quantifier").trim();
         synonym = props.getProperty("synonym", "synonym").trim();
-        initSerials = DPUtil.explode(props.getProperty("initSerials", "").trim(), ",", " ", true);
+        initSerials = DPUtil.explode(props.getProperty("initSerials", "").trim(), ",", " ", false);
     }
 
     public String getUrl() {
