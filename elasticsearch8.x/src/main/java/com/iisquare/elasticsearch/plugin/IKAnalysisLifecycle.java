@@ -1,6 +1,7 @@
 package com.iisquare.elasticsearch.plugin;
 
 import com.iisquare.elasticsearch.wltea.dic.Dictionary;
+import com.iisquare.elasticsearch.wltea.util.HttpUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.component.AbstractLifecycleComponent;
@@ -24,6 +25,7 @@ public class IKAnalysisLifecycle extends AbstractLifecycleComponent {
 
     @Override
     protected void doClose() throws IOException {
-        logger.debug("#trace@ApplicationLifecycle.doStart");
+        logger.debug("#trace@ApplicationLifecycle.doClose");
+        HttpUtil.close();
     }
 }

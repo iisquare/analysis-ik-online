@@ -17,6 +17,7 @@ import org.elasticsearch.rest.RestRequest;
 import org.elasticsearch.rest.action.RestActionListener;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,10 @@ public class ReloadHandler extends HandlerBase {
             message(channel, 1001, "请勿将forceNode设置为空值", null);
             return;
         }
+        // 提取认证头，用于集群节点间转发
+        final String authHeader = request.header("Authorization");
+        // 根据原始请求的 scheme 决定转发使用的协议，ES 8.x 开启 security 后通常为 https
+        final String scheme = request.getHttpRequest().scheme(); // "http" or "https"
         // 获取集群节点信息
         final NodesInfoRequest nodesInfoRequest = new NodesInfoRequest();
         nodesInfoRequest.clear().addMetric("http");
@@ -69,6 +74,11 @@ public class ReloadHandler extends HandlerBase {
                 for (NodeInfo nodeInfo : nodeList) {
                     TransportAddress address = nodeInfo.getInfo(HttpInfo.class).getAddress().publishAddress();
                     nodeMap.put(nodeInfo.getNode().getId(), address.getAddress() + ":" + address.getPort());
+                }
+                // 构建认证请求头
+                Map<String, String> headers = new HashMap<>();
+                if (!DPUtil.empty(authHeader)) {
+                    headers.put("Authorization", authHeader);
                 }
                 // 执行集群调度，重载全部节点词典
                 LinkedHashMap<String, Object> map = new LinkedHashMap<>();
@@ -85,9 +95,9 @@ public class ReloadHandler extends HandlerBase {
                             result = ApiUtil.result(1500, "载入失败", current);
                         }
                     } else {
-                        String url = "http://" + nodeName + uri("reload");
+                        String url = scheme + "://" + nodeName + uri("reload");
                         param.put("forceNode", true);
-                        result = DPUtil.parseJSON(HttpUtil.requestPost(url, DPUtil.buildJSON(param)));
+                        result = DPUtil.parseJSON(HttpUtil.requestPost(url, DPUtil.buildJSON(param), headers));
                     }
                     if (null == result) {
                         status = false;
