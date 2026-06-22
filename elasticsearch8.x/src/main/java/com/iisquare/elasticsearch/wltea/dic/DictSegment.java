@@ -123,7 +123,7 @@ class DictSegment implements Comparable<DictSegment> {
         // 设置hit的当前处理位置
         searchHit.setEnd(begin);
 
-        Character keyChar = new Character(charArray[begin]);
+        Character keyChar = Character.valueOf(charArray[begin]);
         DictSegment ds = null;
 
         // 引用实例变量为本地变量，避免查询时遇到更新的同步问题
@@ -206,7 +206,7 @@ class DictSegment implements Comparable<DictSegment> {
     private synchronized void fillSegment(char[] charArray, int begin,
                                           int length, int enabled) {
         // 获取字典表中的汉字对象
-        Character beginChar = new Character(charArray[begin]);
+        Character beginChar = Character.valueOf(charArray[begin]);
         Character keyChar = charMap.get(beginChar);
         // 字典中没有该字，则将其添加入字典
         if (keyChar == null) {
