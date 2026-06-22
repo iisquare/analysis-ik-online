@@ -60,7 +60,8 @@ public class ReloadHandler extends HandlerBase {
         // 提取认证头，用于集群节点间转发
         final String authHeader = request.header("Authorization");
         // 根据原始请求的 scheme 决定转发使用的协议，ES 8.x 开启 security 后通常为 https
-        final String scheme = request.getHttpRequest().scheme(); // "http" or "https"
+        // ES 8.19+ HttpRequest 不再提供 scheme() 方法，通过 X-Forwarded-Proto 头获取
+        final String scheme = DPUtil.empty(request.header("X-Forwarded-Proto")) ? "http" : request.header("X-Forwarded-Proto");
         // 获取集群节点信息
         final NodesInfoRequest nodesInfoRequest = new NodesInfoRequest();
         nodesInfoRequest.clear().addMetric("http");

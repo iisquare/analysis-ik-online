@@ -1,8 +1,8 @@
-# analysis-ik-online for elasticsearch7.x
+# analysis-ik-online for elasticsearch8.x
 
 ## **安装步骤**
 
-- cd analysis-ik-online/elasticsearch7.x
+- cd analysis-ik-online/elasticsearch8.x
 - gradle release
 - 采用离线方式安装analysis-ik-online插件
 	- cd /path/to/elasticsearch
