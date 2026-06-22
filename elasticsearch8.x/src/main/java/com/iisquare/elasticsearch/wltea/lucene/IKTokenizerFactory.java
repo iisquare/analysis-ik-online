@@ -23,7 +23,7 @@ public class IKTokenizerFactory extends AbstractTokenizerFactory {
         String useArabic = settings.get("useArabic");
         if (null != useArabic) this.useArabic = useArabic.equals("true");
         String useEnglish = settings.get("useEnglish");
-        if (null != useEnglish) this.useEnglish = dictSerial.equals("true");
+        if (null != useEnglish) this.useEnglish = useEnglish.equals("true");
         String useSynonym = settings.get("useSynonym");
         if (null != useSynonym) this.useSynonym = useSynonym.equals("true");
     }

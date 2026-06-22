@@ -29,7 +29,7 @@ public class NodesHandler extends HandlerBase {
     @Override
     public void handleRequest(RestRequest request, RestChannel channel, NodeClient client) throws Exception {
         final NodesInfoRequest nodesInfoRequest = new NodesInfoRequest();
-        nodesInfoRequest.clear().addMetric(NodesInfoRequest.Metric.HTTP.metricName());
+        nodesInfoRequest.clear().addMetric("http");
         nodesInfoRequest.timeout(TimeValue.timeValueMillis(3000));
         client.admin().cluster().nodesInfo(nodesInfoRequest, new RestActionListener<NodesInfoResponse>(channel) {
             @Override

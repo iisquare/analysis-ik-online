@@ -28,6 +28,7 @@ import com.iisquare.elasticsearch.wltea.lucene.IKSynonymParser;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 import com.iisquare.elasticsearch.wltea.util.FileUtil;
 import com.iisquare.elasticsearch.wltea.util.HttpUtil;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.LowerCaseFilter;
@@ -35,7 +36,6 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.apache.lucene.analysis.synonym.SynonymMap;
-import org.elasticsearch.common.logging.Loggers;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Dictionary {
     private static Map<String, Dictionary> singletonMap = new ConcurrentHashMap<>(); // 词典单子实例
-    final Logger logger = Loggers.getLogger(getClass(), getClass().getSimpleName());
+    final Logger logger = LogManager.getLogger();
     private DictSegment _MainDict;// 主词典对象
     private DictSegment _StopWordDict; // 停止词词典
     private DictSegment _QuantifierDict; // 量词词典

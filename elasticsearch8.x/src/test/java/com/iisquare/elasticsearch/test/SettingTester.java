@@ -5,7 +5,6 @@ import org.elasticsearch.common.settings.Setting.Property;
 import org.elasticsearch.common.unit.ByteSizeUnit;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.core.TimeValue;
-import org.elasticsearch.index.mapper.AllFieldMapper;
 import org.elasticsearch.index.translog.Translog;
 
 import java.util.Locale;
@@ -15,7 +14,7 @@ import java.util.function.Function;
 public class SettingTester {
 
     public Setting<String> DEFAULT_FIELD_SETTING = new Setting<>(
-            "index.query.default_field", AllFieldMapper.NAME,
+            "index.query.default_field", "*",
             Function.identity(), Property.IndexScope);
     public Setting<Boolean> QUERY_STRING_LENIENT_SETTING = Setting.boolSetting(
             "index.query_string.lenient", false, Property.IndexScope);

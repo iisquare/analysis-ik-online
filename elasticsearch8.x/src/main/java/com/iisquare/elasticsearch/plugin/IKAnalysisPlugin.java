@@ -4,12 +4,11 @@ import com.iisquare.elasticsearch.handler.*;
 import com.iisquare.elasticsearch.wltea.lucene.IKAnalyzerProvider;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 import com.iisquare.elasticsearch.wltea.util.FileUtil;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
-import org.elasticsearch.common.component.LifecycleComponent;
-import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.ClusterSettings;
 import org.elasticsearch.common.settings.IndexScopedSettings;
 import org.elasticsearch.common.settings.Settings;
@@ -19,6 +18,7 @@ import org.elasticsearch.indices.analysis.AnalysisModule.AnalysisProvider;
 import org.elasticsearch.plugins.ActionPlugin;
 import org.elasticsearch.plugins.AnalysisPlugin;
 import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.plugins.Plugin.PluginServices;
 import org.elasticsearch.rest.RestController;
 import org.elasticsearch.rest.RestHandler;
 
@@ -34,7 +34,7 @@ public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPl
     private static final String pluginDescriptorFileName = "plugin-descriptor.properties";
     public static String pluginName = null; // 插件名称
     public static String pluginPath = null; // 插件运行路径
-    final Logger logger = Loggers.getLogger(getClass(), getClass().getSimpleName());
+    final Logger logger = LogManager.getLogger();
 
     public IKAnalysisPlugin() throws IOException {
         logger.debug("#trace@IKAnalysisPlugin.construct");
@@ -86,8 +86,8 @@ public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPl
     }
 
     @Override
-    public Collection<Class<? extends LifecycleComponent>> getGuiceServiceClasses() {
-        logger.debug("#trace@IKAnalysisPlugin.getGuiceServiceClasses");
-        return Arrays.asList(IKAnalysisLifecycle.class);
+    public Collection<Object> createComponents(PluginServices services) {
+        logger.debug("#trace@IKAnalysisPlugin.createComponents");
+        return Arrays.asList(new IKAnalysisLifecycle());
     }
 }

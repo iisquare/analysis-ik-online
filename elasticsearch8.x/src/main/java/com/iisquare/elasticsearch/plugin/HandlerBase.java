@@ -2,8 +2,8 @@ package com.iisquare.elasticsearch.plugin;
 
 import com.iisquare.elasticsearch.wltea.util.ApiUtil;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.core.Tuple;
 import org.elasticsearch.rest.*;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 public abstract class HandlerBase implements RestHandler {
 
-    protected final Logger logger = Loggers.getLogger(getClass(), getClass().getSimpleName());
+    protected final Logger logger = LogManager.getLogger();
 
     public String uri() {
         return "/_plugin/" + IKAnalysisPlugin.pluginName + "/";
@@ -27,7 +27,7 @@ public abstract class HandlerBase implements RestHandler {
 
     public void text(RestChannel channel, String text) {
         if (null == text) text = "";
-        channel.sendResponse(new BytesRestResponse(RestStatus.OK, BytesRestResponse.TEXT_CONTENT_TYPE, text));
+        channel.sendResponse(new RestResponse(RestStatus.OK, RestResponse.TEXT_CONTENT_TYPE, text));
     }
 
     public void json(RestChannel channel, Map<String, ?> map) {

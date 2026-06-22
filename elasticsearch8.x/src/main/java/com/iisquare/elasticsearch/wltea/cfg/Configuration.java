@@ -26,8 +26,8 @@ package com.iisquare.elasticsearch.wltea.cfg;
 import com.iisquare.elasticsearch.plugin.IKAnalysisPlugin;
 import com.iisquare.elasticsearch.wltea.util.DPUtil;
 import com.iisquare.elasticsearch.wltea.util.FileUtil;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.common.logging.Loggers;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -43,7 +43,7 @@ public class Configuration {
      */
     private static final String FILE_NAME = "IKAnalyzer.cfg.xml";
     private static Configuration instance;
-    final Logger logger = Loggers.getLogger(getClass(), getClass().getSimpleName());
+    final Logger logger = LogManager.getLogger();
     private String url, word = "word", stopword = "stopword", quantifier = "quantifier", synonym = "synonym";
     private Properties props;
     private String[] initSerials; // 预初始化的词典

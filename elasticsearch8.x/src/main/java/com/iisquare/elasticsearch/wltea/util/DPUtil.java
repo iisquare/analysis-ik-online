@@ -1,9 +1,8 @@
 package com.iisquare.elasticsearch.wltea.util;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.logging.Loggers;
-import org.elasticsearch.common.xcontent.*;
 import org.elasticsearch.xcontent.*;
 
 import java.io.IOException;
@@ -21,7 +20,7 @@ public class DPUtil {
 
     public static final String regexDouble = "^-?\\d+(\\.\\d)*";
     public static final String regexSafeImplode = "^[\\w_]+$";
-    static final Logger logger = Loggers.getLogger(DPUtil.class, DPUtil.class.getSimpleName());
+    static final Logger logger = LogManager.getLogger();
 
     /**
      * null false "" 0 "0" 返回true
