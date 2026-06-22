@@ -10,7 +10,7 @@ public class IKAnalyzerProvider extends AbstractIndexAnalyzerProvider<IKAnalyzer
     private final IKAnalyzer analyzer;
 
     public IKAnalyzerProvider(IndexSettings indexSettings, Environment env, String name, Settings settings) {
-        super(indexSettings, name, settings);
+        super(name, settings);
         String dictSerial = settings.get("dictSerial");
         String useSmart = settings.get("useSmart", "");
         String useArabic = settings.get("useArabic", "");

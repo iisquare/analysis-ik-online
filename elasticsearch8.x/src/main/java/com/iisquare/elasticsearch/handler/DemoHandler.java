@@ -17,8 +17,8 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
-import org.elasticsearch.client.node.NodeClient;
+import org.apache.lucene.store.ByteBuffersDirectory;
+import org.elasticsearch.client.internal.node.NodeClient;
 import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestRequest;
 
@@ -63,7 +63,7 @@ public class DemoHandler extends HandlerBase {
         IndexSearcher isearcher = null;
         try {
             // 建立内存索引对象
-            directory = new RAMDirectory();
+            directory = new ByteBuffersDirectory();
             // 配置IndexWriterConfig
             IndexWriterConfig iwConfig = new IndexWriterConfig(indexAnalyzer);
             iwConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);

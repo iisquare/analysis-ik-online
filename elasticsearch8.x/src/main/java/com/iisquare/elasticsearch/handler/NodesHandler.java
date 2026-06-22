@@ -4,7 +4,7 @@ import com.iisquare.elasticsearch.plugin.HandlerBase;
 import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequest;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
-import org.elasticsearch.client.node.NodeClient;
+import org.elasticsearch.client.internal.node.NodeClient;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.http.HttpInfo;

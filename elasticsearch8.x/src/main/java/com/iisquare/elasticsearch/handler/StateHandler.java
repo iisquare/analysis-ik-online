@@ -2,7 +2,7 @@ package com.iisquare.elasticsearch.handler;
 
 import com.iisquare.elasticsearch.plugin.HandlerBase;
 import com.iisquare.elasticsearch.wltea.cfg.Configuration;
-import org.elasticsearch.client.node.NodeClient;
+import org.elasticsearch.client.internal.node.NodeClient;
 import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestRequest;
 

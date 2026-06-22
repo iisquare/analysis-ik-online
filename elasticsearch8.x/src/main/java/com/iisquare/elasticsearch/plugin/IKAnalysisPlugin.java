@@ -9,10 +9,12 @@ import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
+import org.elasticsearch.common.io.stream.NamedWriteableRegistry;
 import org.elasticsearch.common.settings.ClusterSettings;
 import org.elasticsearch.common.settings.IndexScopedSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.settings.SettingsFilter;
+import org.elasticsearch.features.NodeFeature;
 import org.elasticsearch.index.analysis.AnalyzerProvider;
 import org.elasticsearch.indices.analysis.AnalysisModule.AnalysisProvider;
 import org.elasticsearch.plugins.ActionPlugin;
@@ -27,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPlugin {
@@ -74,7 +77,7 @@ public class IKAnalysisPlugin extends Plugin implements AnalysisPlugin, ActionPl
     }
 
     @Override
-    public List<RestHandler> getRestHandlers(Settings settings, RestController restController, ClusterSettings clusterSettings, IndexScopedSettings indexScopedSettings, SettingsFilter settingsFilter, IndexNameExpressionResolver indexNameExpressionResolver, Supplier<DiscoveryNodes> nodesInCluster) {
+    public Collection<RestHandler> getRestHandlers(Settings settings, NamedWriteableRegistry namedWriteableRegistry, RestController restController, ClusterSettings clusterSettings, IndexScopedSettings indexScopedSettings, SettingsFilter settingsFilter, IndexNameExpressionResolver indexNameExpressionResolver, Supplier<DiscoveryNodes> nodesInCluster, Predicate<NodeFeature> nodeFeaturePredicate) {
         logger.debug("#trace@IKAnalysisPlugin.getRestHandlers");
         return Arrays.asList(
                 new DemoHandler(),

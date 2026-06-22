@@ -7,6 +7,7 @@ import org.elasticsearch.xcontent.*;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -670,8 +671,10 @@ public class DPUtil {
     public static Object parseJSON(String json) {
         if (empty(json)) return null;
         try {
+            XContentParserConfiguration config = XContentParserConfiguration.EMPTY
+                    .withDeprecationHandler(DeprecationHandler.THROW_UNSUPPORTED_OPERATION);
             return XContentFactory.xContent(XContentType.JSON)
-                    .createParser(NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, json)
+                    .createParser(config, json.getBytes(StandardCharsets.UTF_8))
                     .mapOrdered();
         } catch (IOException e) {
             logger.warn(e.getMessage(), e);

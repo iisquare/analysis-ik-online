@@ -13,7 +13,7 @@ public class IKSynmonymFilterFactory extends AbstractTokenFilterFactory {
     private String dictSerial = null;
 
     public IKSynmonymFilterFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
-        super(indexSettings, name, settings);
+        super(name, settings);
         String dictSerial = settings.get("dictSerial");
         if (null != dictSerial) this.dictSerial = dictSerial.trim();
     }

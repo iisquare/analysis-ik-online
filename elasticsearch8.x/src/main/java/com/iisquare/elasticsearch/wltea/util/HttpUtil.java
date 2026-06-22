@@ -10,6 +10,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.logging.log4j.LogManager;
@@ -41,7 +42,7 @@ public class HttpUtil {
             response = httpClient.execute(httpGet);
             if (response.getCode() != HttpStatus.SC_OK) return null;
             return EntityUtils.toString(response.getEntity());
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             logger.error(e.getMessage(), e);
             return null;
         } finally {
@@ -63,7 +64,6 @@ public class HttpUtil {
             } else {
                 return null;
             }
-            entity.setContentEncoding("UTF-8");
             httpPost.setEntity(entity);
         }
         CloseableHttpResponse response = null;
@@ -71,7 +71,7 @@ public class HttpUtil {
             response = httpClient.execute(httpPost);
             if (response.getCode() != HttpStatus.SC_OK) return null;
             return EntityUtils.toString(response.getEntity());
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             logger.error(e.getMessage(), e);
             return null;
         } finally {
